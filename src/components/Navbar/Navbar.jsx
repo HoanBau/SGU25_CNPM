@@ -4,44 +4,59 @@ import "./Navbar.css";
 import { assets } from "../../assets/assets";
 import { Link } from "react-router-dom";
 
-const Navbar = ({ setShowLogin }) => {
+const Navbar = ({ user, setUser, setShowLogin }) => {
   const { getTotalQuantity } = useContext(StoreContext);
   const totalQuantity = getTotalQuantity();
-
   const [menu, setMenu] = useState("home");
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
+
+  const handleLogout = () => {
+    setUser(null);
+    setShowUserDropdown(false);
+  };
 
   return (
     <div className="navbar">
-      {/* Đổi logo hình thành chữ FoodFast */}
       <Link to="/" className="logo-text">
         FoodFast
       </Link>
 
-      <ul className="navbar-menu">
+      {/* Hamburger icon cho mobile */}
+      <div
+        className="hamburger"
+        onClick={() => setShowMobileMenu((prev) => !prev)}
+      >
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+
+      <ul className={`navbar-menu ${showMobileMenu ? "active" : ""}`}>
         <Link
           to="/"
-          onClick={() => setMenu("home")}
+          onClick={() => { setMenu("home"); setShowMobileMenu(false); }}
           className={menu === "home" ? "active" : ""}
         >
           Home
         </Link>
         <a
           href="#explore-menu"
-          onClick={() => setMenu("menu")}
+          onClick={() => { setMenu("menu"); setShowMobileMenu(false); }}
           className={menu === "menu" ? "active" : ""}
         >
           Menu
         </a>
         <a
           href="#app-download"
-          onClick={() => setMenu("mobile-app")}
+          onClick={() => { setMenu("mobile-app"); setShowMobileMenu(false); }}
           className={menu === "mobile-app" ? "active" : ""}
         >
           Mobile App
         </a>
         <a
           href="#footer"
-          onClick={() => setMenu("contact-us")}
+          onClick={() => { setMenu("contact-us"); setShowMobileMenu(false); }}
           className={menu === "contact-us" ? "active" : ""}
         >
           Contact Us
@@ -49,7 +64,7 @@ const Navbar = ({ setShowLogin }) => {
       </ul>
 
       <div className="navbar-right">
-        <img src={assets.search_icon} alt="search_icon" />
+        {/* Giỏ hàng */}
         <div className="navbar-basket-icon">
           <Link to="/cart">
             <img src={assets.basket_icon} alt="basket_icon" />
@@ -58,7 +73,34 @@ const Navbar = ({ setShowLogin }) => {
             <p>{totalQuantity}</p>
           </div>
         </div>
-        <button onClick={() => setShowLogin(true)}>Sign in</button>
+
+        {/* User */}
+        {user ? (
+          <div className="navbar-user-wrapper">
+            <div
+              className="navbar-user"
+              onClick={() => setShowUserDropdown((prev) => !prev)}
+              style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}
+            >
+              <img
+                src={user.avatar || assets.user_icon}
+                alt="user_avatar"
+                className="user-avatar"
+                style={{ width: "32px", borderRadius: "50%" }}
+              />
+              <span>{user.name}</span>
+            </div>
+
+            {/* Dropdown logout */}
+            {showUserDropdown && (
+              <div className="user-dropdown">
+                <button onClick={handleLogout}>Logout</button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button onClick={() => setShowLogin(true)}>Sign in</button>
+        )}
       </div>
     </div>
   );
