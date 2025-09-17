@@ -3,6 +3,11 @@ import "./FoodItem.css";
 import { assets } from "../../assets/assets";
 import { StoreContext } from "../../context/StoreContext";
 
+// Hàm định dạng số tiền VNĐ (dấu chấm ngăn cách nghìn, không kèm chữ đ)
+const formatVND = (amount) => {
+  return amount.toLocaleString("vi-VN"); // ví dụ: 20.000
+};
+
 const FoodItem = ({ id, name, price, description, image }) => {
   const { cartItems, addToCart, removeFromCart } = useContext(StoreContext);
 
@@ -39,7 +44,8 @@ const FoodItem = ({ id, name, price, description, image }) => {
           <img src={assets.rating_starts} alt="rating_starts" />
         </div>
         <p className="food-item-desc">{description}</p>
-        <p className="food-item-price">${price}</p>
+        {/* hiển thị giá đã format sang VNĐ */}
+        <p className="food-item-price">{formatVND(price)}</p>
       </div>
     </div>
   );

@@ -6,26 +6,25 @@ import menu_1 from './g_gi_n_vui_v_-_4.png'
 import menu_2 from './g_gi_n_vui_v_-_8_1_1.png'
 import menu_3 from './burger_-_7.png'
 import menu_4 from './m_jolly_-_6_7-compressed_1.jpg'
-import menu_5 from './m_n_tr_ng_mi_ng_-_3.png'
+import menu_5 from './m_n_tr_ng_mi_ng_-_1.png'
 import menu_6 from './th_c_u_ng_-_5_6_1.png'
 
 
-import food_1 from './food_1.png'
-import food_2 from './food_2.png'
-import food_3 from './food_3.png'
+import food_1 from './D.BUCKET2 (1).jpg'
+import food_2 from './D.BUCKET5.jpg'
+import food_3 from './DBUCKET1.jpg'
 import food_4 from './1PCS.jpg'
-import food_5 from './food_5.png'
-import food_6 from './food_6.png'
-import food_7 from './food_7.png'
-import food_8 from './food_8.png'
-import food_9 from './food_9.png'
-import food_10 from './food_10.png'
-import food_11 from './food_11.png'
-import food_12 from './food_12.png'
-import food_13 from './food_13.png'
-import food_14 from './food_14.png'
-import food_15 from './food_15.png'
-import food_16 from './food_16.png'
+import food_5 from './DBUCKET4 (1).jpg'
+import food_6 from './1-GA-XOT.jpg'
+import food_7 from './PHILE-XOT.jpg'
+import food_8 from './Burger-Flava.jpg'
+import food_9 from './Burger-Shrimp.jpg'
+import food_10 from './Burger-Zinger.jpg'
+import food_11 from './MIGAXUXI (1).jpg'
+import food_12 from './MIGAXUXI-GA-RAN.jpg'
+import food_13 from './MIGAXUXI-GA-VIEN.jpg'
+import food_14 from './FF-L (1).jpg'
+import food_15 from './khoai-mui-cau-R.jpg'
 import food_17 from './EGGTART-4.jpg'
 import food_18 from './EGGTART-1.jpg'
 import food_19 from './4-Chewy-Cheese.jpg'
@@ -94,7 +93,7 @@ export const menu_list = [
         menu_image: menu_4
     },
     {
-        menu_name: "Tráng miệng",
+        menu_name: "Thức ăn nhẹ",
         menu_image: menu_5
     },
     {
@@ -106,153 +105,168 @@ export const menu_list = [
 export const food_list = [
     {
         _id: "1",
-        name: "Greek salad",
+        name: "Combo Nhóm 3 Đủ Đầy",
         image: food_1,
-        price: 12,
-        description: "Food provides essential nutrients for overall health and well-being",
+        price: 219000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
         category: "Combo"
     },
     {
         _id: "2",
-        name: "Veg salad",
+        name: "Combo Nhóm 2 Tròn Vị ",
         image: food_2,
-        price: 18,
-        description: "Food provides essential nutrients for overall health and well-being",
+        price: 160000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
         category: "Combo"
     }, {
         _id: "3",
-        name: "Clover Salad",
+        name: "Combo Nhóm 2 Hoàn Hảo",
         image: food_3,
-        price: 16,
-        description: "Food provides essential nutrients for overall health and well-being",
+        price: 135000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
         category: "Combo"
     }, {
         _id: "4",
-        name: "Gà Xốt Mắm Tỏi",
+        name: "Combo Nhóm 2 No Nê",
         image: food_5,
-        price: 24000,
-        description: "Food provides essential nutrients for overall health and well-being",
+        price: 179000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
         category: "Combo"
     }, {
         _id: "5",
         name: "Gà Xốt Mắm Tỏi",
         image: food_4,
-        price: 14,
-        description: "Food provides essential nutrients for overall health and well-being",
+        price: 45000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
         category: "Gà"
     }, {
         _id: "6",
-        name: "Peri Peri Rolls",
+        name: "Gà Rán",
         image: food_6,
-        price: 12,
-        description: "Food provides essential nutrients for overall health and well-being",
+        price: 35000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
         category: "Gà"
     }, {
         _id: "7",
-        name: "Chicken Rolls",
+        name: "Phi Lê Gà Quay",
         image: food_7,
-        price: 20,
-        description: "Food provides essential nutrients for overall health and well-being",
+        price: 42000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
         category: "Gà"
     }, {
         _id: "8",
-        name: "Veg Rolls",
+        name: "Burger Gà Quay Flava",
         image: food_8,
-        price: 15,
-        description: "Food provides essential nutrients for overall health and well-being",
+        price: 54000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
         category: "Hambuger"
     }, {
         _id: "9",
-        name: "Ripple Ice Cream",
+        name: "Burger Tôm",
         image: food_9,
-        price: 14,
-        description: "Food provides essential nutrients for overall health and well-being",
+        price: 45000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
         category: "Hambuger"
     }, {
         _id: "10",
-        name: "Fruit Ice Cream",
+        name: "Burger Zinger",
         image: food_10,
-        price: 22,
-        description: "Food provides essential nutrients for overall health and well-being",
+        price: 54000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
         category: "Hambuger"
     }, {
         _id: "11",
-        name: "Jar Ice Cream",
+        name: "Mì Migaxuxi ",
         image: food_11,
-        price: 10,
-        description: "Food provides essential nutrients for overall health and well-being",
+        price: 35000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
         category: "Mỳ ý"
     }, {
         _id: "12",
-        name: "Vanilla Ice Cream",
+        name: "Mì Migaxuxi Gà Rán",
         image: food_12,
-        price: 12,
-        description: "Food provides essential nutrients for overall health and well-being",
+        price: 64000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
         category: "Mỳ ý"
     },
     {
         _id: "13",
-        name: "Chicken Sandwich",
+        name: "Mì Migaxuxi Gà Viên",
         image: food_13,
-        price: 12,
-        description: "Food provides essential nutrients for overall health and well-being",
+        price: 45000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
         category: "Mỳ ý"
+    }, {
+        _id: "14",
+        name: "Khoai Tây Chiên",
+        image: food_14,
+        price: 29000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
+        category: "Thức ăn nhẹ"
     },
      {
-        _id: "14",
-        name: "Cup Cake",
-        image: food_17,
-        price: 14,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Tráng miệng"
-    }, {
         _id: "15",
-        name: "Vegan Cake",
-        image: food_18,
-        price: 12,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Tráng miệng"
-    }, {
+        name: "Khoai Tây Múi Cau",
+        image: food_15,
+        price: 23000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
+        category: "Thức ăn nhẹ"
+    },
+     {
         _id: "16",
-        name: "Butterscotch Cake",
-        image: food_19,
-        price: 20,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Tráng miệng"
+        name: "4 Bánh trứng",
+        image: food_17,
+        price: 64000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
+        category: "Thức ăn nhẹ"
     }, {
         _id: "17",
-        name: "Sliced Cake",
-        image: food_20,
-        price: 15,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Tráng miệng"
+        name: "1 Bánh trứng",
+        image: food_18,
+        price: 18000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
+        category: "Thức ăn nhẹ"
     }, {
         _id: "18",
-        name: "Aquafina 500ml ",
-        image: food_21,
-        price: 14,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Nước uống"
+        name: "Phô Mai Viên",
+        image: food_19,
+        price: 36000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
+        category: "Thức ăn nhẹ"
     }, {
         _id: "19",
-        name: "7UP Lon",
-        image: food_22,
-        price: 22,
-        description: "Food provides essential nutrients for overall health and well-being",
-        category: "Nước uống"
+        name: "Khoai Môn Viên Kim Sa",
+        image: food_20,
+        price: 28000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
+        category: "Thức ăn nhẹ"
     }, {
         _id: "20",
-        name: "Lipton",
-        image: food_23,
-        price: 10,
-        description: "Food provides essential nutrients for overall health and well-being",
+        name: "Aquafina 500ml ",
+        image: food_21,
+        price: 15000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
         category: "Nước uống"
     }, {
         _id: "21",
+        name: "7UP Lon",
+        image: food_22,
+        price: 19000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
+        category: "Nước uống"
+    }, {
+        _id: "22",
+        name: "Lipton",
+        image: food_23,
+        price: 15000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
+        category: "Nước uống"
+    }, {
+        _id: "23",
         name: "Pepsi Phúc Bồn Tử Lon",
         image: food_24,
-        price: 12,
-        description: "Food provides essential nutrients for overall health and well-being",
+        price: 19000,
+        description: "Fastfood cung cấp năng lượng nhanh, ngon miệng và tiện cho cuộc sống bận rộn.",
         category: "Nước uống"
     }
 ]

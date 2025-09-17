@@ -65,3 +65,10 @@ footer hr {
     gap: 35px;
   }
 }
+
+.footer-logo-text {
+  font-size: 28px;
+  font-weight: bold;
+  color: #ff4d4d; /* đổi màu theo ý bạn */
+  cursor: default;
+}

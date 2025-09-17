@@ -4,7 +4,13 @@ import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets";
 
-export const deliveryFee = 2;
+// Phí giao hàng: 20.000 VNĐ
+export const deliveryFee = 20000;
+
+// Hàm định dạng số tiền (chỉ hiển thị số, có dấu chấm phân cách nghìn)
+const formatVND = (amount) => {
+  return amount.toLocaleString("vi-VN"); // ví dụ: 20.000
+};
 
 const Cart = () => {
   const {
@@ -14,24 +20,28 @@ const Cart = () => {
     getTotalCartAmount,
     getTotalQuantity,
   } = useContext(StoreContext);
-  const totalQuantity = getTotalQuantity();
+
+  const tongSoLuong = getTotalQuantity();
   const navigate = useNavigate();
+
+  // Giả sử giá sản phẩm đã tính bằng VNĐ
+  const tongTienHang = getTotalCartAmount();
 
   return (
     <div className="cart">
       <div className="cart-items">
         <div className="cart-items-title cart-heading">
-          <p>Items</p>
-          <p>Title</p>
-          <p>Price</p>
-          <p>Quantity</p>
-          <p>Total</p>
-          <p>Remove</p>
+          <p>Sản phẩm</p>
+          <p>Tên món</p>
+          <p>Giá</p>
+          <p>Số lượng</p>
+          <p>Tạm tính</p>
+          <p>Xóa</p>
         </div>
         <br />
         <hr />
-        {totalQuantity === 0 ? (
-          <p className="NoItems">No Items in cart</p>
+        {tongSoLuong === 0 ? (
+          <p className="NoItems">Không có sản phẩm trong giỏ hàng</p>
         ) : (
           food_list.map((item, index) => {
             if (cartItems[item._id] > 0) {
@@ -41,18 +51,18 @@ const Cart = () => {
                     className="cart-items-title cart-items-item"
                     key={item._id}
                   >
-                    <img src={item.image} alt="food img" />
+                    <img src={item.image} alt="ảnh món ăn" />
                     <p>{item.name}</p>
-                    <p>${item.price}</p>
+                    <p>{formatVND(item.price)}</p>
                     <p>{cartItems[item._id]}</p>
-                    <p>${item.price * cartItems[item._id]}</p>
+                    <p>{formatVND(item.price * cartItems[item._id])}</p>
                     <p
                       className="Remove"
                       onClick={() => removeFromCart(item._id)}
                     >
                       <img
                         src={assets.remove_icon_cross}
-                        alt="remove_icon_cross"
+                        alt="biểu tượng xóa"
                       />
                     </p>
                   </div>
@@ -63,45 +73,38 @@ const Cart = () => {
           })
         )}
       </div>
+
       <div className="cart-bottom">
         <div className="cart-total">
-          <h2>Cart Total</h2>
+          <h2>Tổng thanh toán</h2>
           <div>
             <div className="cart-total-details">
-              <p>Subtotal</p>
-              <p>${getTotalCartAmount()}</p>
+              <p>Tổng tiền hàng</p>
+              <p>{formatVND(tongTienHang)}</p>
             </div>
             <hr />
             <div className="cart-total-details">
-              <p>Delivery Free</p>
-              <p>${getTotalCartAmount() === 0 ? 0 : deliveryFee}</p>
+              <p>Phí giao hàng</p>
+              <p>
+                {tongTienHang === 0 ? formatVND(0) : formatVND(deliveryFee)}
+              </p>
             </div>
             <hr />
             <div className="cart-total-details">
-              <b>Total</b>
+              <b>Tổng cộng</b>
               <b>
-                $
-                {getTotalCartAmount() === 0
-                  ? 0
-                  : getTotalCartAmount() + deliveryFee}
+                {tongTienHang === 0
+                  ? formatVND(0)
+                  : formatVND(tongTienHang + deliveryFee)}
               </b>
             </div>
           </div>
           <button
-            disabled={getTotalCartAmount() === 0}
+            disabled={tongTienHang === 0}
             onClick={() => navigate("/order")}
           >
-            PROCEED TO CHECKOUT
+            TIẾN HÀNH ĐẶT HÀNG
           </button>
-        </div>
-        <div className="cart-promocode">
-          <div>
-            <p>If you have a promocode, Enter it here</p>
-            <div className="cart-promocode-input">
-              <input type="text" placeholder="Promo Code" />
-              <button>Submit</button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

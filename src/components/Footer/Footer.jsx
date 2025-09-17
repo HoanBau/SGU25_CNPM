@@ -9,12 +9,15 @@ const Footer = () => {
     <footer id="footer">
       <div className="footer-content">
         <div className="footer-content-left">
-          <img src={assets.logo} alt="logo" />
+          {/* Thay logo hình ảnh bằng chữ FoodFast */}
+          <h1 className="footer-logo-text">FoodFast</h1>
+
           <p>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fugit
-            ratione fugiat vitae quisquam dolores sint id, nisi veniam
-            repellendus. Tempore, expedita. At praesentium deserunt minima!
-            Porro iste beatae maxime voluptatem?
+            FoodFast tự hào mang đến cho bạn những món ăn nhanh nóng hổi,
+            hương vị thơm ngon và đa dạng. Chúng tôi cam kết phục vụ nhanh
+            chóng, tiện lợi, giúp bạn tiết kiệm thời gian mà vẫn thưởng thức
+            được bữa ăn chất lượng, phù hợp cho nhịp sống năng động và bận rộn
+            mỗi ngày.
           </p>
           <div className="footer-social-icons">
             <a href="https://www.facebook.com">
@@ -28,25 +31,29 @@ const Footer = () => {
             </a>
           </div>
         </div>
+
         <div className="footer-content-center">
-          <h2>COMPANY</h2>
+          <h2>CÔNG TY</h2>
           <ul>
-            <li onClick={() => navigate("/")}>Home</li>
-            <li>About Us</li>
-            <li>Delivery</li>
-            <li>Privacy Policy</li>
+            <li onClick={() => navigate("/")}>Trang chủ</li>
+            <li>Giới thiệu</li>
+            <li>Giao hàng</li>
+            <li>Chính sách bảo mật</li>
           </ul>
         </div>
+
         <div className="footer-content-right">
-          <h2>GET IN TOUCH</h2>
+          <h2>LIÊN HỆ</h2>
           <ul>
-            <li>+1-123-456-7890</li>
-            <li>contact@tomato.com</li>
+            <li>(028) 38489828</li>
+            <li>contact@foodfast.com</li>
           </ul>
         </div>
       </div>
       <hr />
-      <p className="footer-copyright">Copyright 2024 © Tomato.com</p>
+      <p className="footer-copyright">
+        Copyright 2024 © foodfast.com
+      </p>
     </footer>
   );
 };
