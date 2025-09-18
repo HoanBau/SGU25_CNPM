@@ -4,25 +4,37 @@ import "./PlaceOrder.css";
 import { deliveryFee } from "../Cart/Cart";
 import { useNavigate } from "react-router-dom";
 
-const PlaceOrder = () => {
+const PlaceOrder = ({ addOrder }) => {        // ✅ nhận addOrder từ App
   const { getTotalCartAmount, setCartItems } = useContext(StoreContext);
   const navigate = useNavigate();
 
   const [showPopup, setShowPopup] = useState(false);
 
+  // ✅ thêm state lưu email để truyền sang TrackOrder
+  const [orderEmail, setOrderEmail] = useState("");
+
   // Hàm format tiền VNĐ
-  const formatVND = (amount) => amount.toLocaleString("vi-VN") + " đ";
+  const formatVND = (amount) => amount.toLocaleString("vi-VN");
 
   const handleCheckout = (e) => {
     e.preventDefault();
     if (getTotalCartAmount() === 0) return;
-    setShowPopup(true);          // 👉 Mở popup
-    setCartItems({});            // 👉 Xóa giỏ hàng
+
+    // ✅ lưu đơn hàng mới
+    const newOrder = {
+      id: Date.now(),               // mã đơn tạm
+      email: orderEmail,
+      status: "Đang xử lý"
+    };
+    addOrder && addOrder(newOrder);  // chỉ gọi nếu prop tồn tại
+
+    setShowPopup(true);              // 👉 Mở popup
+    setCartItems({});                // 👉 Xóa giỏ hàng
   };
 
   const closePopup = () => {
     setShowPopup(false);
-    navigate("/");               // 👉 Về trang chủ
+    navigate("/");                   // 👉 Về trang chủ
   };
 
   return (
@@ -38,13 +50,21 @@ const PlaceOrder = () => {
             <input type="text" placeholder="Họ" required />
             <input type="text" placeholder="Tên" required />
           </div>
-          <input type="email" placeholder="Địa chỉ email" required />
-          <input type="text" placeholder="Địa chỉ đường" required />
+
+          {/* ✅ ràng buộc email vào state orderEmail */}
+          <input
+            type="email"
+            placeholder="Địa chỉ email"
+            required
+            value={orderEmail}
+            onChange={(e) => setOrderEmail(e.target.value)}
+          />
+
+          <input type="text" placeholder="Địa chỉ" required />
           <div className="multi-fields">
+            <input type="text" placeholder="Quận/Huyện" required />
             <input type="text" placeholder="Thành phố" required />
-            <input type="text" placeholder="Tỉnh/Thành" required />
           </div>
-          {/* Số điện thoại: chặn nút tăng giảm */}
           <input
             type="number"
             placeholder="Số điện thoại"
@@ -65,7 +85,7 @@ const PlaceOrder = () => {
               <div className="cart-total-details">
                 <p>Phí giao hàng</p>
                 <p>
-                  {getTotalCartAmount() === 0 ? "0 đ" : formatVND(deliveryFee)}
+                  {getTotalCartAmount() === 0 ? "0 " : formatVND(deliveryFee)}
                 </p>
               </div>
               <hr />
@@ -73,7 +93,7 @@ const PlaceOrder = () => {
                 <b>Tổng cộng</b>
                 <b>
                   {getTotalCartAmount() === 0
-                    ? "0 đ"
+                    ? "0 "
                     : formatVND(getTotalCartAmount() + deliveryFee)}
                 </b>
               </div>

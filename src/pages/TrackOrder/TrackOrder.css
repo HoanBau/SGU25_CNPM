@@ -1,0 +1,76 @@
+.trackorder-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  text-align: center;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+.trackorder-container h2 {
+  margin-bottom: 20px;
+  color: #ff4d4f;                 /* màu chủ đạo */
+}
+
+.trackorder-form {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.trackorder-form input[type="email"] {
+  padding: 10px 12px;
+  width: 260px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  transition: border 0.2s ease;
+}
+
+.trackorder-form input[type="email"]:focus {
+  border-color: #ff4d4f;
+  outline: none;
+}
+
+.trackorder-form button {
+  padding: 10px 20px;
+  background-color: #ff4d4f;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background-color 0.2s ease;
+}
+
+.trackorder-form button:hover {
+  background-color: #e63e40;
+}
+
+.trackorder-result {
+  text-align: left;
+  margin-top: 10px;
+}
+
+.trackorder-result h3 {
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.trackorder-result ul {
+  list-style: none;
+  padding: 0;
+}
+
+.trackorder-result li {
+  padding: 8px 0;
+  border-bottom: 1px dashed #ddd;
+  color: #555;
+}
+
+.trackorder-result b {
+  color: #000;
+}

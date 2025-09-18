@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { StoreContext } from "../../context/StoreContext";
 import "./Navbar.css";
 import { assets } from "../../assets/assets";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = ({ user, setUser, setShowLogin }) => {
   const { getTotalQuantity } = useContext(StoreContext);
@@ -11,9 +11,21 @@ const Navbar = ({ user, setUser, setShowLogin }) => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
 
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     setUser(null);
     setShowUserDropdown(false);
+  };
+
+  const goToMenuSection = () => {
+    navigate("/");
+    setTimeout(() => {
+      const section = document.getElementById("explore-menu");
+      if (section) section.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+    setMenu("menu");
+    setShowMobileMenu(false);
   };
 
   return (
@@ -33,6 +45,7 @@ const Navbar = ({ user, setUser, setShowLogin }) => {
       </div>
 
       <ul className={`navbar-menu ${showMobileMenu ? "active" : ""}`}>
+        {/* 1️⃣ Home */}
         <Link
           to="/"
           onClick={() => { setMenu("home"); setShowMobileMenu(false); }}
@@ -40,13 +53,26 @@ const Navbar = ({ user, setUser, setShowLogin }) => {
         >
           Home
         </Link>
+
+        {/* 2️⃣ Menu */}
         <a
           href="#explore-menu"
-          onClick={() => { setMenu("menu"); setShowMobileMenu(false); }}
+          onClick={goToMenuSection}
           className={menu === "menu" ? "active" : ""}
         >
           Menu
         </a>
+
+        {/* 3️⃣ Track Order (đã chuyển ngay sau Menu) */}
+        <Link
+          to="/track-order"
+          onClick={() => { setMenu("track-order"); setShowMobileMenu(false); }}
+          className={menu === "track-order" ? "active" : ""}
+        >
+          Track Order
+        </Link>
+
+        {/* 4️⃣ Mobile App */}
         <a
           href="#app-download"
           onClick={() => { setMenu("mobile-app"); setShowMobileMenu(false); }}
@@ -54,6 +80,8 @@ const Navbar = ({ user, setUser, setShowLogin }) => {
         >
           Mobile App
         </a>
+
+        {/* 5️⃣ Contact Us */}
         <a
           href="#footer"
           onClick={() => { setMenu("contact-us"); setShowMobileMenu(false); }}
