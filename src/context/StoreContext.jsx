@@ -6,6 +6,9 @@ export const StoreContext = createContext(null);
 const StoreContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
 
+  // 🆕 State lưu mã giảm giá
+  const [discount, setDiscount] = useState(0);
+
   const addToCart = (itemId) => {
     if (!cartItems[itemId]) {
       setCartItems((prev) => ({ ...prev, [itemId]: 1 }));
@@ -44,6 +47,17 @@ const StoreContextProvider = (props) => {
     return totalAmount;
   };
 
+  // 🆕 Hàm áp dụng mã giảm giá
+  const applyDiscount = (code) => {
+    if (code.trim().toUpperCase() === "DISCOUNT") {
+      setDiscount(15000); // giảm 15k
+      return true;
+    } else {
+      setDiscount(0);
+      return false;
+    }
+  };
+
   const contextValue = {
     food_list,
     cartItems,
@@ -52,6 +66,8 @@ const StoreContextProvider = (props) => {
     removeFromCart,
     getTotalCartAmount,
     getTotalQuantity,
+    discount,       // 🆕 thêm discount
+    applyDiscount,  // 🆕 thêm hàm áp dụng mã
   };
 
   return (

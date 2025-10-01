@@ -1,20 +1,41 @@
-import React, { useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";  
 import Navbar from "./components/Navbar/Navbar";
+import NavbarAdmin from "./components/Navbar/NavbarAdmin";
 import Home from "./pages/Home/Home";
 import Cart from "./pages/Cart/Cart";
 import PlaceOrder from "./pages/PlaceOrder/PlaceOrder";
 import Footer from "./components/Footer/Footer";
 import LoginPopup from "./components/LoginPopup/LoginPopup";
-import TrackOrder from "./pages/TrackOrder/TrackOrder"; // <-- TRANG THEO DÕI ĐƠN HÀNG MỚI
+import TrackOrder from "./pages/TrackOrder/TrackOrder"; 
+import Admin from "./pages/Admin/Admin";   
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [user, setUser] = useState(null);
-  const [orders, setOrders] = useState([]); // <-- NƠI LƯU DANH SÁCH ĐƠN HÀNG
 
-  // 👉 HÀM MỚI: thêm đơn hàng vào danh sách
-  const addOrder = (newOrder) => setOrders((prev) => [...prev, newOrder]);
+  // ✅ Khởi tạo orders từ localStorage nếu có
+  const [orders, setOrders] = useState(() => {
+    const savedOrders = localStorage.getItem("orders");
+    return savedOrders ? JSON.parse(savedOrders) : [];
+  });
+
+  const location = useLocation();   
+  const isAdminPage = location.pathname.startsWith("/admin"); 
+
+  // ✅ Thêm đơn hàng mới và lưu vào localStorage
+  const addOrder = (newOrder) => {
+    setOrders((prev) => {
+      const updated = [...prev, newOrder];
+      localStorage.setItem("orders", JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  // ✅ Nếu muốn xóa tất cả dữ liệu khi reload (tùy bạn)
+  // useEffect(() => {
+  //   localStorage.removeItem("orders");
+  // }, []);
 
   return (
     <>
@@ -23,29 +44,39 @@ const App = () => {
       )}
 
       <div className="app">
-        <Navbar
-          setShowLogin={setShowLogin}
-          user={user}
-          setUser={setUser}        // truyền setUser xuống Navbar
-        />
+        {isAdminPage ? (
+          <NavbarAdmin 
+            user={user}
+            setUser={setUser}
+            setShowLogin={setShowLogin}
+          />
+        ) : (
+          <Navbar
+            setShowLogin={setShowLogin}
+            user={user}
+            setUser={setUser}        
+          />
+        )}
+
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/cart" element={<Cart />} />
           <Route
             path="/order"
             element={<PlaceOrder orders={orders} addOrder={addOrder} />} 
-            // ✅ truyền addOrder cho PlaceOrder để khi bấm “Đặt hàng”
-            // có thể push đơn hàng mới vào state orders
           />
           <Route
             path="/track-order"
             element={<TrackOrder orders={orders} />} 
-            // ✅ trang Theo dõi đơn hàng: chỉ cần đọc orders để tra cứu
+          />
+          <Route 
+            path="/admin" 
+            element={<Admin orders={orders} />}   
           />
         </Routes>
       </div>
 
-      <Footer />
+      {!isAdminPage && <Footer />}
     </>
   );
 };

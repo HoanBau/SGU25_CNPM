@@ -1,0 +1,69 @@
+.revenue-chart-container {
+  margin-top: 20px; /* đẩy toàn bộ chart xuống 20px */
+  padding: 10px;    /* hoặc dùng padding để tạo khoảng trống bên trong */
+  background-color: #fff; /* giữ nền trắng nếu muốn */
+  border-radius: 8px;     /* bo góc nhẹ */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* optional shadow */
+}
+
+.revenue-chart-container h2 {
+  margin-bottom: 15px;
+  color: #FF6B35; /* màu cam đỏ hợp với theme */
+}
+
+.revenue-chart-buttons {
+  margin-bottom: 15px;
+}
+
+.revenue-chart-buttons button {
+  background-color: #fff;
+  border: 1px solid #FF6B35;
+  color: #FF6B35;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: all 0.2s ease;
+}
+
+.revenue-chart-buttons button.active,
+.revenue-chart-buttons button:hover {
+  background-color: #FF6B35;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(255,107,53,0.4);
+}
+
+
+/* .revenue-chart-container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  margin-bottom: 30px;
+}
+
+.revenue-chart-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.revenue-chart-buttons button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #eee;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.revenue-chart-buttons button.active {
+  background: #FF6B35;
+  color: #fff;
+}
+
+.revenue-chart-buttons button:hover {
+  background: #FF6B35;
+  color: #fff;
+} */

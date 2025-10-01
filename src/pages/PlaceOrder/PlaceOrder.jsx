@@ -5,36 +5,42 @@ import { deliveryFee } from "../Cart/Cart";
 import { useNavigate } from "react-router-dom";
 
 const PlaceOrder = ({ addOrder }) => {        // ✅ nhận addOrder từ App
-  const { getTotalCartAmount, setCartItems } = useContext(StoreContext);
+  const { getTotalCartAmount, setCartItems, cartItems } = useContext(StoreContext);
   const navigate = useNavigate();
 
   const [showPopup, setShowPopup] = useState(false);
+  const [orderEmail, setOrderEmail] = useState(""); // email user
 
-  // ✅ thêm state lưu email để truyền sang TrackOrder
-  const [orderEmail, setOrderEmail] = useState("");
+  const discount = Number(localStorage.getItem("discount")) || 0;
 
-  // Hàm format tiền VNĐ
   const formatVND = (amount) => amount.toLocaleString("vi-VN");
+
+  const subtotal = getTotalCartAmount();
+  const shipping = subtotal === 0 ? 0 : deliveryFee;
+  const total = subtotal === 0 ? 0 : subtotal + shipping - discount;
 
   const handleCheckout = (e) => {
     e.preventDefault();
-    if (getTotalCartAmount() === 0) return;
+    if (subtotal === 0) return;
 
-    // ✅ lưu đơn hàng mới
+    // ✅ tạo đơn hàng mới đầy đủ thông tin để Admin dùng
     const newOrder = {
-      id: Date.now(),               // mã đơn tạm
+      id: Date.now(),               
       email: orderEmail,
-      status: "Đang xử lý"
+      status: "Đang xử lý",
+      items: { ...cartItems },    // giỏ hàng
+      totalAmount: total          // tổng tiền
     };
-    addOrder && addOrder(newOrder);  // chỉ gọi nếu prop tồn tại
 
-    setShowPopup(true);              // 👉 Mở popup
-    setCartItems({});                // 👉 Xóa giỏ hàng
+    addOrder && addOrder(newOrder);  // gửi dữ liệu lên App (Admin sẽ nhận)
+    setShowPopup(true);
+    setCartItems({});                
+    localStorage.removeItem("discount");
   };
 
   const closePopup = () => {
     setShowPopup(false);
-    navigate("/");                   // 👉 Về trang chủ
+    navigate("/");
   };
 
   return (
@@ -51,7 +57,6 @@ const PlaceOrder = ({ addOrder }) => {        // ✅ nhận addOrder từ App
             <input type="text" placeholder="Tên" required />
           </div>
 
-          {/* ✅ ràng buộc email vào state orderEmail */}
           <input
             type="email"
             placeholder="Địa chỉ email"
@@ -79,33 +84,35 @@ const PlaceOrder = ({ addOrder }) => {        // ✅ nhận addOrder từ App
             <div>
               <div className="cart-total-details">
                 <p>Tạm tính</p>
-                <p>{formatVND(getTotalCartAmount())}</p>
+                <p>{formatVND(subtotal)}</p>
               </div>
               <hr />
               <div className="cart-total-details">
                 <p>Phí giao hàng</p>
-                <p>
-                  {getTotalCartAmount() === 0 ? "0 " : formatVND(deliveryFee)}
-                </p>
+                <p>{formatVND(shipping)}</p>
               </div>
               <hr />
+              {discount > 0 && (
+                <>
+                  <div className="cart-total-details">
+                    <p>Giảm giá</p>
+                    <p>-{formatVND(discount)}</p>
+                  </div>
+                  <hr />
+                </>
+              )}
               <div className="cart-total-details">
                 <b>Tổng cộng</b>
-                <b>
-                  {getTotalCartAmount() === 0
-                    ? "0 "
-                    : formatVND(getTotalCartAmount() + deliveryFee)}
-                </b>
+                <b>{formatVND(total)}</b>
               </div>
             </div>
-            <button type="submit" disabled={getTotalCartAmount() === 0}>
+            <button type="submit" disabled={subtotal === 0}>
               Tiếp tục thanh toán
             </button>
           </div>
         </div>
       </form>
 
-      {/* ===== POPUP ===== */}
       {showPopup && (
         <div className="popup-overlay">
           <div className="popup">

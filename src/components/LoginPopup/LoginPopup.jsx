@@ -1,20 +1,50 @@
 import React, { useState } from "react";
 import "./LoginPopup.css";
 import { assets } from "../../assets/assets";
+import { useNavigate } from "react-router-dom"; // ✅ THÊM
 
 const LoginPopup = ({ setShowLogin, setUser }) => {
   const [currentState, setCurrentState] = useState("Sign up");
+  const [errorMsg, setErrorMsg] = useState("");
+  const navigate = useNavigate(); // ✅ THÊM
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const nameInput = e.target.elements.name?.value || "User";
+    const emailInput = e.target.elements.email.value;
+    const passwordInput = e.target.elements.password.value;
 
-    setUser({
-      name: nameInput,
-      avatar: assets.user_icon,
-    });
+    // ✅ Kiểm tra nếu là admin
+    if (emailInput === "admin@foodfast.com" && passwordInput === "admin123") {
+      setUser({
+        name: "Admin",
+        avatar: assets.user_icon,
+        role: "admin", // thêm role để phân quyền
+      });
+      setShowLogin(false);
+      navigate("/admin");   // ✅ THÊM: chuyển hướng qua trang admin
+      return;
+    }
 
-    setShowLogin(false);
+    // ✅ Người dùng thường
+    if (currentState === "Sign up") {
+      setUser({
+        name: nameInput,
+        avatar: assets.user_icon,
+        role: "user",
+      });
+      setShowLogin(false);
+    } else if (currentState === "Login") {
+      // login thường → ở đây chưa có backend nên chỉ giả lập
+      setUser({
+        name: "User",
+        avatar: assets.user_icon,
+        role: "user",
+      });
+      setShowLogin(false);
+    } else {
+      setErrorMsg("❌ Sai email hoặc mật khẩu");
+    }
   };
 
   return (
@@ -34,8 +64,15 @@ const LoginPopup = ({ setShowLogin, setUser }) => {
             <input type="text" name="name" placeholder="Your name" required />
           )}
           <input type="email" name="email" placeholder="Your email" required />
-          <input type="password" name="password" placeholder="Password" required />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+          />
         </div>
+
+        {errorMsg && <p className="error-msg">{errorMsg}</p>}
 
         <button type="submit">
           {currentState === "Sign up" ? "Create Account" : "Login"}

@@ -127,3 +127,51 @@
     justify-content: start;
   }
 }
+
+
+.cart-discount-box {
+  display: flex;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.discount-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: border 0.3s;
+}
+
+.discount-input:focus {
+  border: 2px solid #ff6600;
+}
+
+.discount-btn {
+  background: #ff6600;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.discount-btn:hover {
+  background: #e65c00;
+}
+
+.discount-error {
+  color: red;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.discount-success {
+  color: green;
+  font-size: 14px;
+  margin-top: 4px;
+}

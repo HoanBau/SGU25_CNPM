@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import "./Cart.css";
 import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
@@ -7,9 +7,13 @@ import { assets } from "../../assets/assets";
 // Phí giao hàng: 20.000 VNĐ
 export const deliveryFee = 20000;
 
-// Hàm định dạng số tiền (chỉ hiển thị số, có dấu chấm phân cách nghìn)
+// Giảm giá cố định
+const DISCOUNT_CODE = "DISCOUNT";
+const DISCOUNT_VALUE = 15000;
+
+// Hàm định dạng số tiền
 const formatVND = (amount) => {
-  return amount.toLocaleString("vi-VN"); // ví dụ: 20.000
+  return amount.toLocaleString("vi-VN");
 };
 
 const Cart = () => {
@@ -24,8 +28,33 @@ const Cart = () => {
   const tongSoLuong = getTotalQuantity();
   const navigate = useNavigate();
 
-  // Giả sử giá sản phẩm đã tính bằng VNĐ
   const tongTienHang = getTotalCartAmount();
+
+  // State mã giảm giá
+  const [code, setCode] = useState("");
+  const [validDiscount, setValidDiscount] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  // Áp dụng mã giảm giá
+  const handleApplyCode = () => {
+    if (code.trim().toUpperCase() === DISCOUNT_CODE) {
+      setValidDiscount(true);
+      setErrorMsg("");
+      localStorage.setItem("discount", DISCOUNT_VALUE); // ✅ LƯU discount để PlaceOrder dùng
+    } else {
+      setValidDiscount(false);
+      setErrorMsg("❌ Mã khuyến mãi không hợp lệ");
+      localStorage.removeItem("discount"); // ✅ nếu sai thì xóa
+    }
+  };
+
+  // Tính tổng cộng sau giảm
+  const tongCong =
+    tongTienHang === 0
+      ? 0
+      : tongTienHang +
+        deliveryFee -
+        (validDiscount ? DISCOUNT_VALUE : 0);
 
   return (
     <div className="cart">
@@ -47,10 +76,7 @@ const Cart = () => {
             if (cartItems[item._id] > 0) {
               return (
                 <React.Fragment key={item._id}>
-                  <div
-                    className="cart-items-title cart-items-item"
-                    key={item._id}
-                  >
+                  <div className="cart-items-title cart-items-item">
                     <img src={item.image} alt="ảnh món ăn" />
                     <p>{item.name}</p>
                     <p>{formatVND(item.price)}</p>
@@ -70,6 +96,7 @@ const Cart = () => {
                 </React.Fragment>
               );
             }
+            return null;
           })
         )}
       </div>
@@ -90,13 +117,32 @@ const Cart = () => {
               </p>
             </div>
             <hr />
+
+            {/* Ô nhập mã giảm giá */}
+            <div className="cart-discount-box">
+              <input
+                type="text"
+                value={code}
+                placeholder="Nhập mã giảm giá..."
+                onChange={(e) => setCode(e.target.value)}
+                className="discount-input"
+              />
+              <button onClick={handleApplyCode} className="discount-btn">
+                Áp dụng
+              </button>
+            </div>
+
+            {errorMsg && <p className="discount-error">{errorMsg}</p>}
+            {validDiscount && (
+              <p className="discount-success">
+                ✅ Giảm {formatVND(DISCOUNT_VALUE)} VNĐ
+              </p>
+            )}
+            <hr />
+
             <div className="cart-total-details">
               <b>Tổng cộng</b>
-              <b>
-                {tongTienHang === 0
-                  ? formatVND(0)
-                  : formatVND(tongTienHang + deliveryFee)}
-              </b>
+              <b>{formatVND(tongCong)}</b>
             </div>
           </div>
           <button

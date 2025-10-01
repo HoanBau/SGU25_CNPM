@@ -1,0 +1,59 @@
+.sidebar {
+  width: 240px;
+  background: #ffffff;
+  border-right: 1px solid #eaeaea;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.sidebar h2 {
+  font-size: 20px;
+  margin-bottom: 30px;
+  font-weight: 700;
+  color: #ff4d4f; /* màu chủ đạo giống user */
+  text-align: center;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+.sidebar ul li {
+  margin: 12px 0;
+  padding: 12px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.sidebar ul li:hover {
+  background: #ffecec; /* nhấn nhá màu nhạt */
+  color: #ff4d4f;
+  transform: translateX(4px);
+}
+
+.sidebar ul li.active {
+  background: #ff4d4f;
+  color: white;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  font-size: 14px;
+  text-align: center;
+  color: #888;
+}

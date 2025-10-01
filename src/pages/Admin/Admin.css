@@ -1,0 +1,125 @@
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  background: #f9f9f9;
+}
+
+.admin-main {
+  flex: 1;
+  padding: 20px;
+}
+
+.admin-main h1 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* mặc định 3 cột */
+  gap: 20px;
+}
+
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-card h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #ff4d4f; /* màu đỏ nhấn mạnh */
+}
+
+.stat-card p {
+  font-size: 16px;
+  color: #555;
+}
+
+/* ================== RESPONSIVE ================== */
+
+/* Tablet: còn 2 cột */
+@media (max-width: 1024px) {
+  .admin-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-main h1 {
+    font-size: 24px;
+  }
+}
+
+/* Mobile: xuống 1 cột cho gọn */
+@media (max-width: 768px) {
+  .admin-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .stat-card h2 {
+    font-size: 20px;
+  }
+
+  .stat-card p {
+    font-size: 14px;
+  }
+}
+
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  background: #f9f9f9;
+}
+
+.admin-main {
+  flex: 1;
+  padding: 20px;
+}
+
+.admin-main h1 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.admin-stats {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  flex: 1;
+  min-width: 200px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+
+.stat-card h2 {
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: #ff4d4f;
+}
+
+.stat-card p {
+  font-size: 16px;
+  color: #555;
+}
