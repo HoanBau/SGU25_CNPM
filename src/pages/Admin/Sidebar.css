@@ -57,3 +57,24 @@
   text-align: center;
   color: #888;
 }
+ /* Responsive: collapse sidebar trên mobile */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 60px;
+    min-width: 60px;
+    padding: 10px;
+  }
+
+  .sidebar h2 {
+    display: none; /* ẩn tên */
+  }
+
+  .sidebar li {
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .sidebar li span {
+    display: none; /* ẩn text, chỉ còn icon */
+  }
+}

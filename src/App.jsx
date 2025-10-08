@@ -9,6 +9,7 @@ import Footer from "./components/Footer/Footer";
 import LoginPopup from "./components/LoginPopup/LoginPopup";
 import TrackOrder from "./pages/TrackOrder/TrackOrder"; 
 import Admin from "./pages/Admin/Admin";   
+import OrderList from "./pages/Admin/OrderList";  {/* ✅ thêm dòng này */}
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -31,12 +32,7 @@ const App = () => {
       return updated;
     });
   };
-
-  // ✅ Nếu muốn xóa tất cả dữ liệu khi reload (tùy bạn)
-  // useEffect(() => {
-  //   localStorage.removeItem("orders");
-  // }, []);
-
+  
   return (
     <>
       {showLogin && (
@@ -73,6 +69,10 @@ const App = () => {
             path="/admin" 
             element={<Admin orders={orders} />}   
           />
+          <Route 
+            path="/admin/orders" 
+            element={<OrderList orders={orders} />}  
+          /> {/* ✅ thêm route mới */}
         </Routes>
       </div>
 
