@@ -3,6 +3,7 @@ import "./Admin.css";
 import Sidebar from "./Sidebar";
 import RevenueChart from "./RevenueChart";
 import OrderList from "./OrderList"; // ✅ import OrderList
+import DroneMap from "./DroneMap"; // 
 import { food_list } from "../../assets/assets";
 
 const Admin = ({ orders }) => {
@@ -132,6 +133,9 @@ const Admin = ({ orders }) => {
 
         {/* OrderList */}
         {currentView === "orders" && <OrderList orders={orders} />}
+
+        {/* ✅ DroneMap - mới thêm */}
+        {currentView === "drone" && <DroneMap />}
       </div>
     </div>
   );

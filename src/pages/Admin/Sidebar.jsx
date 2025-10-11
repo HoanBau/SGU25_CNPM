@@ -1,7 +1,7 @@
 import React from "react";
 import "./Sidebar.css";
 
-// Giữ nguyên component cũ nhưng thêm props để chuyển tab
+// Giữ nguyên component cũ nhưng thêm mục Drone
 const Sidebar = ({ setView, currentView }) => {
   return (
     <div className="sidebar">
@@ -13,11 +13,20 @@ const Sidebar = ({ setView, currentView }) => {
         >
           📊 Dashboard
         </li>
+
         <li
           className={currentView === "orders" ? "active" : ""}
           onClick={() => setView("orders")}
         >
           📝 Danh sách đơn hàng
+        </li>
+
+        {/* ✅ Mục mới: Drone Map */}
+        <li
+          className={currentView === "drone" ? "active" : ""}
+          onClick={() => setView("drone")}
+        >
+          🚁 Drone
         </li>
       </ul>
     </div>
