@@ -4,7 +4,7 @@ import "./PlaceOrder.css";
 import { deliveryFee } from "../Cart/Cart";
 import { useNavigate } from "react-router-dom";
 
-const PlaceOrder = ({ addOrder }) => {        // ✅ nhận addOrder từ App
+const PlaceOrder = ({ addOrder }) => {
   const { getTotalCartAmount, setCartItems, cartItems } = useContext(StoreContext);
   const navigate = useNavigate();
 
@@ -19,22 +19,29 @@ const PlaceOrder = ({ addOrder }) => {        // ✅ nhận addOrder từ App
   const shipping = subtotal === 0 ? 0 : deliveryFee;
   const total = subtotal === 0 ? 0 : subtotal + shipping - discount;
 
+  // ✅ XỬ LÝ ĐẶT HÀNG
   const handleCheckout = (e) => {
     e.preventDefault();
     if (subtotal === 0) return;
 
-    // ✅ tạo đơn hàng mới đầy đủ thông tin để Admin dùng
+    // ✅ Tạo đơn hàng mới với status mặc định "Đã nhận"
     const newOrder = {
-      id: Date.now(),               
+      id: Date.now(),
       email: orderEmail,
-      status: "Đang xử lý",
-      items: { ...cartItems },    // giỏ hàng
-      totalAmount: total          // tổng tiền
+      status: "order", // ✅ mặc định "Đã nhận"
+      items: { ...cartItems },
+      totalAmount: total,
+      date: new Date().toISOString()
     };
 
-    addOrder && addOrder(newOrder);  // gửi dữ liệu lên App (Admin sẽ nhận)
+    // Gửi dữ liệu lên App / Admin
+    addOrder && addOrder(newOrder);
+
+    // Hiển thị popup thành công
     setShowPopup(true);
-    setCartItems({});                
+
+    // Xóa giỏ hàng và discount
+    setCartItems({});
     localStorage.removeItem("discount");
   };
 

@@ -71,7 +71,7 @@ const App = () => {
           />
           <Route 
             path="/admin/orders" 
-            element={<OrderList orders={orders} />}  
+            element={<OrderList orders={orders} setOrders={setOrders} />}  
           /> {/* ✅ thêm route mới */}
         </Routes>
       </div>

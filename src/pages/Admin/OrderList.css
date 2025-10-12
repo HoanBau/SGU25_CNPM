@@ -160,3 +160,194 @@
   }
 }
 
+
+.order-status-controls {
+  margin-top: 12px;
+  border-top: 1px dashed #ccc;
+  padding-top: 10px;
+}
+
+.status-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.status-btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #bbb;
+  background: #f3f3f3;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.status-btn.active {
+  background: #4caf50;
+  color: #fff;
+  border-color: #4caf50;
+}
+
+.status-btn:hover {
+  background: #e0e0e0;
+}
+
+.status-badge {
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.status-badge.order {
+  background-color: #2196f3;
+}
+.status-badge.processing {
+  background-color: #ff9800;
+}
+.status-badge.done {
+  background-color: #4caf50;
+}
+
+
+/* 🔁 Quy trình trạng thái đơn hàng */
+.order-status-controls {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px dashed #ccc;
+}
+
+.status-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.status-btn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+
+
+/* ✨ Hiệu ứng hover */
+.status-btn:hover:not(:disabled) {
+  filter: brightness(1.15);
+  transform: scale(1.05);
+}
+
+/* 🔒 Nút bị vô hiệu hóa */
+.status-btn:disabled {
+  background-color: #bdbdbd;
+  cursor: not-allowed;
+  color: #f1f1f1;
+  opacity: 0.7;
+}
+
+/* 🌟 Nút đang active */
+.status-btn.active {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid #fff;
+  transform: scale(1.08);
+}
+
+/* 📋 Thẻ trạng thái nhỏ ở góc
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 13px;
+  color: white;
+}
+
+.status-badge.order {
+  background-color: #4caf50;
+}
+
+.status-badge.processing {
+  background-color: #ff9800;
+}
+
+.status-badge.done {
+  background-color: #2196f3;
+} */
+
+/* 💳 Card đơn hàng */
+.order-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  margin-bottom: 15px;
+  transition: transform 0.2s ease;
+}
+
+.order-card:hover {
+  transform: translateY(-3px);
+}
+
+/* 🔹 Container cho các nút quy trình */
+.order-status-controls {
+  margin-top: 10px;
+}
+
+.order-status-controls p {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.status-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* 🔹 Nút status cơ bản */
+.status-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #555;
+  background-color: #eee;
+  transition: all 0.2s;
+}
+
+/* 🔹 Hover */
+.status-btn:hover {
+  opacity: 0.8;
+}
+
+/* 🔹 Bước active */
+.status-btn.active {
+  color: #fff;
+}
+
+/* 🔹 Màu từng bước */
+.status-btn.active:nth-child(1) {
+  background-color: #3498db; /* Đã nhận – xanh dương */
+}
+
+.status-btn.active:nth-child(2) {
+  background-color: #f39c12; /* Đang xử lý – cam */
+}
+
+.status-btn.active:nth-child(3) {
+  background-color: #27ae60; /* Đã xong – xanh lá */
+}
+
+/* 🔹 Disable nút nếu muốn */
+.status-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
