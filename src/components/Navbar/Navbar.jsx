@@ -14,8 +14,10 @@ const Navbar = ({ user, setUser, setShowLogin }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    localStorage.removeItem("user"); // ✅ Xóa user khỏi localStorage
     setUser(null);
     setShowUserDropdown(false);
+    navigate("/"); // ✅ Quay lại trang chủ sau khi logout
   };
 
   const goToMenuSection = () => {
@@ -45,16 +47,17 @@ const Navbar = ({ user, setUser, setShowLogin }) => {
       </div>
 
       <ul className={`navbar-menu ${showMobileMenu ? "active" : ""}`}>
-        {/* 1️⃣ Home */}
         <Link
           to="/"
-          onClick={() => { setMenu("home"); setShowMobileMenu(false); }}
+          onClick={() => {
+            setMenu("home");
+            setShowMobileMenu(false);
+          }}
           className={menu === "home" ? "active" : ""}
         >
           Home
         </Link>
 
-        {/* 2️⃣ Menu */}
         <a
           href="#explore-menu"
           onClick={goToMenuSection}
@@ -63,28 +66,34 @@ const Navbar = ({ user, setUser, setShowLogin }) => {
           Menu
         </a>
 
-        {/* 3️⃣ Track Order (đã chuyển ngay sau Menu) */}
         <Link
           to="/track-order"
-          onClick={() => { setMenu("track-order"); setShowMobileMenu(false); }}
+          onClick={() => {
+            setMenu("track-order");
+            setShowMobileMenu(false);
+          }}
           className={menu === "track-order" ? "active" : ""}
         >
           Track Order
         </Link>
 
-        {/* 4️⃣ Mobile App */}
         <a
           href="#app-download"
-          onClick={() => { setMenu("mobile-app"); setShowMobileMenu(false); }}
+          onClick={() => {
+            setMenu("mobile-app");
+            setShowMobileMenu(false);
+          }}
           className={menu === "mobile-app" ? "active" : ""}
         >
           Mobile App
         </a>
 
-        {/* 5️⃣ Contact Us */}
         <a
           href="#footer"
-          onClick={() => { setMenu("contact-us"); setShowMobileMenu(false); }}
+          onClick={() => {
+            setMenu("contact-us");
+            setShowMobileMenu(false);
+          }}
           className={menu === "contact-us" ? "active" : ""}
         >
           Contact Us
@@ -108,7 +117,12 @@ const Navbar = ({ user, setUser, setShowLogin }) => {
             <div
               className="navbar-user"
               onClick={() => setShowUserDropdown((prev) => !prev)}
-              style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}
+              style={{
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
             >
               <img
                 src={user.avatar || assets.user_icon}

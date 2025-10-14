@@ -175,3 +175,32 @@
   font-size: 14px;
   margin-top: 4px;
 }
+
+.cart-counter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.counter-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.counter-btn:hover {
+  background-color: #45a049;
+}
+
+.counter-number {
+  min-width: 20px;
+  text-align: center;
+  font-weight: bold;
+}

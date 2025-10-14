@@ -1,7 +1,7 @@
 import React from "react";
 import "./Sidebar.css";
 
-// Giữ nguyên component cũ nhưng thêm mục Drone
+// Sidebar có thêm mục "Quản lý món ăn"
 const Sidebar = ({ setView, currentView }) => {
   return (
     <div className="sidebar">
@@ -21,7 +21,15 @@ const Sidebar = ({ setView, currentView }) => {
           📝 Danh sách đơn hàng
         </li>
 
-        {/* ✅ Mục mới: Drone Map */}
+        {/* ✅ Mục mới: Quản lý món ăn */}
+        <li
+          className={currentView === "manageFood" ? "active" : ""}
+          onClick={() => setView("manageFood")}
+        >
+          🍜 Quản lý món ăn
+        </li>
+
+        {/* ✅ Mục Drone giữ nguyên */}
         <li
           className={currentView === "drone" ? "active" : ""}
           onClick={() => setView("drone")}

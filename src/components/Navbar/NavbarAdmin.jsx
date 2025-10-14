@@ -7,11 +7,19 @@ const NavbarAdmin = ({ user, setUser, setShowLogin }) => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const navigate = useNavigate();
 
+  // ✅ Khi admin logout: quay về trang chủ người dùng + bật popup login
   const handleLogout = () => {
-    setUser(null); // xoá user hiện tại
+    setUser(null); // xóa thông tin admin đang đăng nhập
+    localStorage.removeItem("user"); // xóa user trong localStorage
     setShowUserDropdown(false);
-    navigate("/"); // 👉 chuyển về trang user
-    setShowLogin(true); // 👉 mở popup Sign in
+
+    // 👉 Điều hướng về trang chủ
+    navigate("/");
+
+    // 👉 Hiển thị popup đăng nhập sau khi về trang chủ
+    setTimeout(() => {
+      setShowLogin(true);
+    }, 300);
   };
 
   return (
@@ -51,7 +59,7 @@ const NavbarAdmin = ({ user, setUser, setShowLogin }) => {
             )}
           </div>
         ) : (
-          // ✅ Nếu chưa đăng nhập thì chỉ có Sign in
+          // ✅ Nếu chưa đăng nhập thì chỉ có nút Sign in
           <button onClick={() => setShowLogin(true)}>Sign in</button>
         )}
       </div>

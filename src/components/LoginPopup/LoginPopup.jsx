@@ -1,12 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./LoginPopup.css";
 import { assets } from "../../assets/assets";
-import { useNavigate } from "react-router-dom"; // ✅ THÊM
+import { useNavigate } from "react-router-dom";
 
 const LoginPopup = ({ setShowLogin, setUser }) => {
   const [currentState, setCurrentState] = useState("Sign up");
   const [errorMsg, setErrorMsg] = useState("");
-  const navigate = useNavigate(); // ✅ THÊM
+  const navigate = useNavigate();
+
+  // ✅ Khi component load, kiểm tra xem có user trong localStorage không
+  useEffect(() => {
+    const savedUser = JSON.parse(localStorage.getItem("user"));
+    if (savedUser) {
+      setUser(savedUser);
+      setShowLogin(false);
+    }
+  }, [setUser, setShowLogin]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -14,36 +23,71 @@ const LoginPopup = ({ setShowLogin, setUser }) => {
     const emailInput = e.target.elements.email.value;
     const passwordInput = e.target.elements.password.value;
 
-    // ✅ Kiểm tra nếu là admin
-    if (emailInput === "admin@foodfast.com" && passwordInput === "admin123") {
-      setUser({
-        name: "Admin",
+    // ✅ Kiểm tra Server/Admin tổng
+    if (emailInput === "server@foodfast.com" && passwordInput === "server123") {
+      const serverUser = {
+        name: "Server Admin",
         avatar: assets.user_icon,
-        role: "admin", // thêm role để phân quyền
-      });
+        role: "server",
+      };
+      setUser(serverUser);
+      localStorage.setItem("user", JSON.stringify(serverUser));
       setShowLogin(false);
-      navigate("/admin");   // ✅ THÊM: chuyển hướng qua trang admin
+      navigate("/server"); // route riêng cho server
       return;
     }
 
-    // ✅ Người dùng thường
+    // ✅ Kiểm tra admin quán
+    if (emailInput === "admin@foodfast.com" && passwordInput === "admin123") {
+      const adminUser = {
+        name: "Admin",
+        avatar: assets.user_icon,
+        role: "admin",
+      };
+      setUser(adminUser);
+      localStorage.setItem("user", JSON.stringify(adminUser));
+      setShowLogin(false);
+      navigate("/admin");
+      return;
+    }
+
+    // ✅ Lấy danh sách user cũ trong localStorage
+    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+
     if (currentState === "Sign up") {
-      setUser({
+      if (storedUsers.some((u) => u.email === emailInput)) {
+        setErrorMsg("❌ Email đã tồn tại, vui lòng dùng email khác.");
+        return;
+      }
+
+      const newUser = {
         name: nameInput,
+        email: emailInput,
+        password: passwordInput,
         avatar: assets.user_icon,
         role: "user",
-      });
+      };
+
+      const updatedUsers = [...storedUsers, newUser];
+      localStorage.setItem("users", JSON.stringify(updatedUsers));
+      localStorage.setItem("user", JSON.stringify(newUser));
+      setUser(newUser);
       setShowLogin(false);
-    } else if (currentState === "Login") {
-      // login thường → ở đây chưa có backend nên chỉ giả lập
-      setUser({
-        name: "User",
-        avatar: assets.user_icon,
-        role: "user",
-      });
-      setShowLogin(false);
-    } else {
-      setErrorMsg("❌ Sai email hoặc mật khẩu");
+      return;
+    }
+
+    if (currentState === "Login") {
+      const foundUser = storedUsers.find(
+        (u) => u.email === emailInput && u.password === passwordInput
+      );
+      if (foundUser) {
+        localStorage.setItem("user", JSON.stringify(foundUser));
+        setUser(foundUser);
+        setShowLogin(false);
+      } else {
+        setErrorMsg("❌ Sai email hoặc mật khẩu");
+      }
+      return;
     }
   };
 

@@ -1,12 +1,24 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import "./Admin.css";
 import Sidebar from "./Sidebar";
 import RevenueChart from "./RevenueChart";
-import OrderList from "./OrderList"; // ✅ import OrderList
-import DroneMap from "./DroneMap"; // 
+import OrderList from "./OrderList";
+import DroneMap from "./DroneMap";
+import ManageFood from "./ManageFood";
 import { food_list } from "../../assets/assets";
 
-const Admin = ({ orders }) => {
+const Admin = () => {
+  // ✅ Lưu danh sách đơn hàng vào localStorage (để không mất khi reload)
+  const [orders, setOrders] = useState(() => {
+    const saved = localStorage.getItem("orders");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // ✅ Tự động lưu lại mỗi khi có thay đổi đơn hàng
+  useEffect(() => {
+    localStorage.setItem("orders", JSON.stringify(orders));
+  }, [orders]);
+
   const [currentView, setCurrentView] = useState("dashboard");
   const [showFoodStats, setShowFoodStats] = useState(false);
   const [filter, setFilter] = useState("day");
@@ -131,10 +143,13 @@ const Admin = ({ orders }) => {
           </>
         )}
 
-        {/* OrderList */}
-        {currentView === "orders" && <OrderList orders={orders} />}
+        {/* ✅ OrderList có cả setOrders */}
+        {currentView === "orders" && <OrderList orders={orders} setOrders={setOrders} />}
 
-        {/* ✅ DroneMap - mới thêm */}
+        {currentView === "manageFood" && <ManageFood />}
+
+
+        {/* ✅ DroneMap */}
         {currentView === "drone" && <DroneMap />}
       </div>
     </div>

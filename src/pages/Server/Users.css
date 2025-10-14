@@ -1,0 +1,82 @@
+.users-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.users-container h1 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.user-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.user-form input, .user-form select {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.user-form button {
+  padding: 6px 12px;
+  font-size: 14px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.user-form button:hover {
+  background-color: #45a049;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table th, .users-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.users-table th {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.users-table td button {
+  margin: 0 3px;
+  padding: 4px 8px;
+  font-size: 13px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.users-table td button:first-child {
+  background-color: #2196f3;
+  color: white;
+}
+
+.users-table td button:last-child {
+  background-color: #f44336;
+  color: white;
+}
+
+.users-table td button:hover {
+  opacity: 0.8;
+}
+
+.users-table select {
+  padding: 4px 6px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}

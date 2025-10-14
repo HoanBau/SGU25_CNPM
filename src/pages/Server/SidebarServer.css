@@ -1,0 +1,83 @@
+/* SidebarServer.css */
+
+.sidebar-server {
+  width: 240px;
+  background: #ffffff;
+  border-right: 1px solid #eaeaea;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.sidebar-server h2 {
+  font-size: 20px;
+  margin-bottom: 30px;
+  font-weight: 700;
+  color: #2ecc71; /* màu chủ đạo server */
+  text-align: center;
+}
+
+.sidebar-server ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+.sidebar-server ul li {
+  margin: 12px 0;
+  padding: 12px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.sidebar-server ul li:hover {
+  background: #e6f9ec; /* màu nhấn nhá nhạt */
+  color: #2ecc71;
+  transform: translateX(4px);
+}
+
+.sidebar-server ul li.active {
+  background: #2ecc71;
+  color: white;
+}
+
+.sidebar-server-footer {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  font-size: 14px;
+  text-align: center;
+  color: #888;
+}
+
+/* Responsive: collapse sidebar trên mobile */
+@media (max-width: 768px) {
+  .sidebar-server {
+    width: 60px;
+    min-width: 60px;
+    padding: 10px;
+  }
+
+  .sidebar-server h2 {
+    display: none; /* ẩn tên */
+  }
+
+  .sidebar-server li {
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .sidebar-server li span {
+    display: none; /* chỉ còn icon */
+  }
+}

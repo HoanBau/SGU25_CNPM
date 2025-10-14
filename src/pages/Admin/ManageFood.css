@@ -1,0 +1,142 @@
+.manage-food-container {
+  padding: 20px;
+  font-family: "Arial", sans-serif;
+}
+
+/* Bảng món ăn */
+.food-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.food-table th, .food-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Hover row */
+.food-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Nút toggle (hết hàng / mở bán) */
+.toggle-btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #2ecc71;
+  color: white;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.toggle-btn.soldout {
+  background-color: #e74c3c;
+}
+
+.toggle-btn:hover {
+  opacity: 0.85;
+}
+
+/* Nút xóa */
+.delete-btn {
+  padding: 6px 10px;
+  margin-left: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #c0392b;
+  color: white;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.delete-btn:hover {
+  opacity: 0.85;
+}
+
+/* Form thêm món */
+.add-food-form {
+  margin-bottom: 20px;
+  background-color: #fef9f5;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.add-food-form h2 {
+  margin-bottom: 10px;
+  color: #e67e22;
+}
+
+.add-food-form form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.add-food-form input,
+.add-food-form select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  flex: 1 1 180px;
+}
+
+.add-food-form button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #3498db;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add-food-form button:hover {
+  background-color: #2980b9;
+}
+
+/* Trạng thái món ăn */
+.food-table td.status {
+  font-weight: bold;
+}
+
+.food-table td.status.soldout {
+  color: #e74c3c;
+}
+
+.food-table td.status.available {
+  color: #27ae60;
+}
+
+.popup-success {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #2ecc71;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+  animation: fadein 0.3s, fadeout 0.3s 1.7s;
+}
+
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(-10px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+@keyframes fadeout {
+  from { opacity: 1; transform: translateY(0);}
+  to { opacity: 0; transform: translateY(-10px);}
+}

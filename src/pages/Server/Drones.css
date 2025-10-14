@@ -1,0 +1,84 @@
+.drones-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.drones-container h1 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.drone-form {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.drone-form input[type="text"] {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  flex: 1;
+}
+
+.drone-form button {
+  padding: 6px 12px;
+  font-size: 14px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.drone-form button:hover {
+  background-color: #45a049;
+}
+
+.drones-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.drones-table th,
+.drones-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.drones-table th {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.drones-table td button {
+  margin: 0 3px;
+  padding: 4px 8px;
+  font-size: 13px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.drones-table td button:hover {
+  opacity: 0.8;
+}
+
+.drones-table td button:first-child {
+  background-color: #2196f3;
+  color: white;
+}
+
+.drones-table td button:last-child {
+  background-color: #f44336;
+  color: white;
+}
+
+.drones-table select {
+  padding: 4px 6px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
