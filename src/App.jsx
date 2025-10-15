@@ -12,7 +12,10 @@ import LoginPopup from "./components/LoginPopup/LoginPopup";
 import TrackOrder from "./pages/TrackOrder/TrackOrder";
 import Admin from "./pages/Admin/Admin";
 import OrderList from "./pages/Admin/OrderList";
-import Server from "./pages/Server/Server"; // Trang server mới
+import Server from "./pages/Server/Server";
+
+// ✅ Import thêm
+import Profile from "./components/Profile/Profile"; // <--- thêm dòng này
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -23,29 +26,24 @@ const App = () => {
   const isAdminPage = location.pathname.startsWith("/admin");
   const isServerPage = location.pathname.startsWith("/server");
 
-  // ✅ Load user từ localStorage khi khởi động app
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("user"));
     if (savedUser) {
       setUser(savedUser);
-      // Nếu đang là admin và reload lại thì vẫn ở trang admin
       if (savedUser.role === "admin" && !isAdminPage) {
         navigate("/admin");
       }
-      // Nếu đang là server và reload lại thì vẫn ở trang server
       if (savedUser.role === "server" && !isServerPage) {
         navigate("/server");
       }
     }
   }, [navigate, isAdminPage, isServerPage]);
 
-  // ✅ Lưu đơn hàng trong localStorage
   const [orders, setOrders] = useState(() => {
     const savedOrders = localStorage.getItem("orders");
     return savedOrders ? JSON.parse(savedOrders) : [];
   });
 
-  // ✅ Cập nhật đơn hàng mới
   const addOrder = (newOrder) => {
     setOrders((prev) => {
       const updated = [...prev, newOrder];
@@ -54,23 +52,20 @@ const App = () => {
     });
   };
 
-  // ✅ Đăng xuất user
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUser(null);
     navigate("/");
-    setShowLogin(true); // sau khi logout → về trang chủ và mở popup login
+    setShowLogin(true);
   };
 
   return (
     <>
-      {/* Hiện popup login khi cần */}
       {showLogin && (
         <LoginPopup setShowLogin={setShowLogin} setUser={setUser} />
       )}
 
       <div className="app">
-        {/* Navbar thay đổi theo trang admin / server / người dùng */}
         {isServerPage ? (
           <NavbarServer
             user={user}
@@ -93,7 +88,7 @@ const App = () => {
           />
         )}
 
-        {/* Routes */}
+        {/* ✅ Routes */}
         <Routes>
           {/* Trang người dùng */}
           <Route
@@ -107,6 +102,9 @@ const App = () => {
           />
           <Route path="/track-order" element={<TrackOrder orders={orders} />} />
 
+          {/* ✅ Trang hồ sơ người dùng */}
+          <Route path="/profile" element={<Profile />} />
+
           {/* Trang admin */}
           <Route path="/admin" element={<Admin orders={orders} />} />
           <Route
@@ -119,7 +117,6 @@ const App = () => {
         </Routes>
       </div>
 
-      {/* Footer chỉ hiển thị trên trang người dùng */}
       {!isAdminPage && !isServerPage && <Footer />}
     </>
   );

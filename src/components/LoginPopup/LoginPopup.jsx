@@ -8,7 +8,6 @@ const LoginPopup = ({ setShowLogin, setUser }) => {
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
-  // ✅ Khi component load, kiểm tra xem có user trong localStorage không
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("user"));
     if (savedUser) {
@@ -22,38 +21,41 @@ const LoginPopup = ({ setShowLogin, setUser }) => {
     const nameInput = e.target.elements.name?.value || "User";
     const emailInput = e.target.elements.email.value;
     const passwordInput = e.target.elements.password.value;
+    const phoneInput = e.target.elements.phone?.value || "";
+    const addressInput = e.target.elements.address?.value || "";
 
-    // ✅ Kiểm tra Server/Admin tổng
+    // 🧠 Nếu đăng nhập là server hoặc admin
     if (emailInput === "server@foodfast.com" && passwordInput === "server123") {
       const serverUser = {
         name: "Server Admin",
         avatar: assets.user_icon,
         role: "server",
+        email: emailInput,
       };
-      setUser(serverUser);
       localStorage.setItem("user", JSON.stringify(serverUser));
+      setUser(serverUser);
       setShowLogin(false);
-      navigate("/server"); // route riêng cho server
+      navigate("/server");
       return;
     }
 
-    // ✅ Kiểm tra admin quán
     if (emailInput === "admin@foodfast.com" && passwordInput === "admin123") {
       const adminUser = {
         name: "Admin",
         avatar: assets.user_icon,
         role: "admin",
+        email: emailInput,
       };
-      setUser(adminUser);
       localStorage.setItem("user", JSON.stringify(adminUser));
+      setUser(adminUser);
       setShowLogin(false);
       navigate("/admin");
       return;
     }
 
-    // ✅ Lấy danh sách user cũ trong localStorage
     const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
 
+    // 🧩 Đăng ký
     if (currentState === "Sign up") {
       if (storedUsers.some((u) => u.email === emailInput)) {
         setErrorMsg("❌ Email đã tồn tại, vui lòng dùng email khác.");
@@ -66,6 +68,8 @@ const LoginPopup = ({ setShowLogin, setUser }) => {
         password: passwordInput,
         avatar: assets.user_icon,
         role: "user",
+        phone: phoneInput,
+        address: addressInput,
       };
 
       const updatedUsers = [...storedUsers, newUser];
@@ -76,13 +80,17 @@ const LoginPopup = ({ setShowLogin, setUser }) => {
       return;
     }
 
+    // 🧩 Đăng nhập
     if (currentState === "Login") {
       const foundUser = storedUsers.find(
         (u) => u.email === emailInput && u.password === passwordInput
       );
       if (foundUser) {
-        localStorage.setItem("user", JSON.stringify(foundUser));
-        setUser(foundUser);
+        // ✅ Giữ lại thông tin người dùng đã chỉnh sửa trong Profile
+        const oldUser = JSON.parse(localStorage.getItem("user")) || {};
+        const mergedUser = { ...foundUser, ...oldUser }; // merge giữ phone, address, name đã chỉnh
+        localStorage.setItem("user", JSON.stringify(mergedUser));
+        setUser(mergedUser);
         setShowLogin(false);
       } else {
         setErrorMsg("❌ Sai email hoặc mật khẩu");
@@ -105,7 +113,11 @@ const LoginPopup = ({ setShowLogin, setUser }) => {
 
         <div className="login-popup-inputs">
           {currentState === "Sign up" && (
-            <input type="text" name="name" placeholder="Your name" required />
+            <>
+              <input type="text" name="name" placeholder="Your name" required />
+              <input type="text" name="phone" placeholder="Phone number" />
+              <input type="text" name="address" placeholder="Delivery address" />
+            </>
           )}
           <input type="email" name="email" placeholder="Your email" required />
           <input

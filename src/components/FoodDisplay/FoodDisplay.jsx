@@ -10,7 +10,7 @@ const FoodDisplay = ({ category, user, setShowLogin }) => {
 
   return (
     <div className="food-display" id="food-display">
-      <h2>Top Dishes Near You</h2>
+      <h2>Món ăn hàng đầu gần bạn</h2>
       <div className="food-display-list">
         {foodItems.map((item, index) => {
           if (category === "All" || category === item.category) {

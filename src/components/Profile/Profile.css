@@ -1,0 +1,84 @@
+.profile-container {
+  max-width: 480px;
+  margin: 60px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.profile-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #ff4d4f;
+  font-weight: 600;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.profile-form label {
+  font-weight: 500;
+  color: #333;
+  font-size: 15px;
+}
+
+.profile-form input {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.profile-form input:focus {
+  border-color: #ff4d4f;
+  box-shadow: 0 0 0 3px rgba(255, 77, 79, 0.1);
+}
+
+.readonly-input {
+  background-color: #f5f5f5;
+  color: #777;
+  cursor: not-allowed;
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+  gap: 10px;
+}
+
+.save-btn,
+.delete-btn {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.25s;
+  font-size: 15px;
+  border: 2px solid transparent;
+}
+
+/* Nút lưu */
+.save-btn {
+  background-color: #ff4d4f;
+  color: white;
+}
+.save-btn:hover {
+  background-color: #e04344;
+}
+
+/* Nút xóa */
+.delete-btn {
+  background-color: white;
+  color: #ff4d4f;
+  border-color: #ff4d4f;
+}
+.delete-btn:hover {
+  background-color: #ffeded;
+}

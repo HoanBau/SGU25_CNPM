@@ -133,9 +133,16 @@ const Navbar = ({ user, setUser, setShowLogin }) => {
               <span>{user.name}</span>
             </div>
 
-            {/* Dropdown logout */}
+            {/* Dropdown user (✅ thêm mục mới Profile) */}
             {showUserDropdown && (
               <div className="user-dropdown">
+                <Link
+                  to="/profile"
+                  onClick={() => setShowUserDropdown(false)}
+                  className="dropdown-link"
+                >
+                  Profile
+                </Link>
                 <button onClick={handleLogout}>Logout</button>
               </div>
             )}

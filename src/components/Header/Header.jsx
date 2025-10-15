@@ -5,12 +5,10 @@ const Header = () => {
   return (
     <header>
       <div className="header-contents">
-        <h2>Order Your Favourite Food Here</h2>
+        <h2>Đặt món yêu thích của bạn tại đây</h2>
         <p>
-          Choose from a diverse menu featuring a delectable array of dishes
-          crafted with the finest ingredients and culinary expertise. Our
-          mission is to satisfy your cravings and elevate your dining
-          experience, one delicious meal at a time.
+          
+Lựa chọn từ thực đơn đa dạng với hàng loạt món ăn hấp dẫn được chế biến từ nguyên liệu hảo hạng và chuyên môn ẩm thực cao cấp. Sứ mệnh của chúng tôi là thỏa mãn cơn thèm ăn và nâng tầm trải nghiệm ẩm thực của bạn, từng bữa ăn ngon miệng.
         </p>
         <a href="#explore-menu">
           <button>View Menu</button>
