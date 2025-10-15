@@ -1,69 +1,97 @@
+/* Drones.css - hiện đại & responsive */
 .drones-container {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   padding: 20px;
+  background-color: #f4f6f8;
+  min-height: 100vh;
 }
 
 .drones-container h1 {
   margin-bottom: 20px;
   color: #333;
+  font-size: 28px;
+  font-weight: 600;
 }
 
+/* Form thêm Drone */
 .drone-form {
-  margin-bottom: 20px;
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
+  margin-bottom: 20px;
 }
 
 .drone-form input[type="text"] {
-  padding: 6px 10px;
+  padding: 8px 12px;
   font-size: 14px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
   flex: 1;
+  min-width: 150px;
+  transition: all 0.3s;
+}
+
+.drone-form input[type="text"]:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
 }
 
 .drone-form button {
-  padding: 6px 12px;
+  padding: 8px 16px;
   font-size: 14px;
   background-color: #4caf50;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: all 0.3s;
 }
 
 .drone-form button:hover {
   background-color: #45a049;
+  transform: translateY(-1px);
 }
 
+/* Bảng Drone */
 .drones-table {
   width: 100%;
   border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
 }
 
 .drones-table th,
 .drones-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
+  padding: 12px 14px;
   text-align: center;
+  font-size: 14px;
+  color: #555;
+  border-bottom: 1px solid #eee;
 }
 
 .drones-table th {
-  background-color: #f2f2f2;
+  background: linear-gradient(90deg, #f1f1f1, #e2e2e2);
+  font-weight: 600;
   color: #333;
 }
 
-.drones-table td button {
-  margin: 0 3px;
-  padding: 4px 8px;
-  font-size: 13px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+.drones-table tr:hover {
+  background-color: #f9fafb;
+  transition: background 0.3s;
 }
 
-.drones-table td button:hover {
-  opacity: 0.8;
+/* Button hành động */
+.drones-table td button {
+  margin: 0 4px;
+  padding: 6px 12px;
+  font-size: 13px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
 .drones-table td button:first-child {
@@ -71,14 +99,79 @@
   color: white;
 }
 
+.drones-table td button:first-child:hover {
+  background-color: #1e88e5;
+  transform: translateY(-1px);
+}
+
 .drones-table td button:last-child {
   background-color: #f44336;
   color: white;
 }
 
+.drones-table td button:last-child:hover {
+  background-color: #e53935;
+  transform: translateY(-1px);
+}
+
+/* Select trong bảng */
 .drones-table select {
-  padding: 4px 6px;
-  font-size: 14px;
-  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 13px;
+  border-radius: 6px;
   border: 1px solid #ccc;
+  transition: all 0.3s;
+}
+
+.drones-table select:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .drone-form input,
+  .drone-form button {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+
+  .drones-table th,
+  .drones-table td {
+    padding: 10px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 600px) {
+  .drones-container h1 {
+    font-size: 22px;
+  }
+
+  .drone-form {
+    flex-direction: column;
+  }
+
+  .drones-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .drones-table th,
+  .drones-table td {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .drones-table td button {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .drones-table select {
+    padding: 4px 6px;
+    font-size: 12px;
+  }
 }

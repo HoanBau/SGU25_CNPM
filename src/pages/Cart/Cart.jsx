@@ -8,7 +8,7 @@ import { assets } from "../../assets/assets";
 export const deliveryFee = 20000;
 
 // Giảm giá cố định
-const DISCOUNT_CODE = "DISCOUNT";
+const DISCOUNT_CODE = "FREESHIP";
 const DISCOUNT_VALUE = 15000;
 
 // Hàm định dạng số tiền
@@ -33,18 +33,27 @@ const Cart = () => {
   const [validDiscount, setValidDiscount] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Áp dụng mã giảm giá
-  const handleApplyCode = () => {
-    if (code.trim().toUpperCase() === DISCOUNT_CODE) {
-      setValidDiscount(true);
-      setErrorMsg("");
-      localStorage.setItem("discount", DISCOUNT_VALUE);
-    } else {
-      setValidDiscount(false);
-      setErrorMsg("❌ Mã khuyến mãi không hợp lệ");
-      localStorage.removeItem("discount");
-    }
-  };
+ // Áp dụng mã giảm giá
+const handleApplyCode = () => {
+  if (tongTienHang === 0) {
+    // Giỏ hàng trống → không thể áp dụng mã giảm giá
+    setValidDiscount(false);
+    setErrorMsg("❌ Giỏ hàng trống, không thể áp dụng mã giảm giá");
+    localStorage.removeItem("discount");
+    return;
+  }
+
+  if (code.trim().toUpperCase() === DISCOUNT_CODE) {
+    setValidDiscount(true);
+    setErrorMsg("");
+    localStorage.setItem("discount", DISCOUNT_VALUE);
+  } else {
+    setValidDiscount(false);
+    setErrorMsg("❌ Mã khuyến mãi không hợp lệ");
+    localStorage.removeItem("discount");
+  }
+};
+
 
   // Tính tổng cộng sau giảm
   const tongCong =
@@ -135,7 +144,7 @@ const Cart = () => {
               <input
                 type="text"
                 value={code}
-                placeholder="Nhập mã giảm giá..."
+                placeholder="Nhập mã FREESHIP để được giảm 15000 "
                 onChange={(e) => setCode(e.target.value)}
                 className="discount-input"
               />

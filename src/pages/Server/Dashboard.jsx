@@ -58,7 +58,7 @@ const Dashboard = ({ stores, drones, orders }) => {
 
       {/* Danh sách 5 cửa hàng */}
       <div className="dashboard-table">
-        <h2>5 cửa hàng gần đây</h2>
+        <h2>Các cửa hàng gần đây</h2>
         <table>
           <thead>
             <tr>

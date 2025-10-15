@@ -1,5 +1,4 @@
-/* SidebarServer.css */
-
+/* SidebarServer.css - phiên bản hiện đại & responsive */
 .sidebar-server {
   width: 240px;
   background: #ffffff;
@@ -8,15 +7,18 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: all 0.3s;
+  box-shadow: 2px 0 6px rgba(0,0,0,0.05);
 }
 
 .sidebar-server h2 {
   font-size: 20px;
   margin-bottom: 30px;
   font-weight: 700;
-  color: #2ecc71; /* màu chủ đạo server */
+  color: #2ecc71;
   text-align: center;
+  letter-spacing: 1px;
 }
 
 .sidebar-server ul {
@@ -27,7 +29,7 @@
 }
 
 .sidebar-server ul li {
-  margin: 12px 0;
+  margin: 10px 0;
   padding: 12px 15px;
   border-radius: 10px;
   cursor: pointer;
@@ -37,18 +39,19 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .sidebar-server ul li:hover {
-  background: #e6f9ec; /* màu nhấn nhá nhạt */
-  color: #2ecc71;
-  transform: translateX(4px);
+  background-color: #e6f9ec;
+  color: #27ae60;
+  transform: translateX(5px);
 }
 
 .sidebar-server ul li.active {
-  background: #2ecc71;
-  color: white;
+  background-color: #2ecc71;
+  color: #fff;
+  font-weight: 600;
 }
 
 .sidebar-server-footer {
@@ -60,6 +63,11 @@
   color: #888;
 }
 
+/* Icon & Text */
+.sidebar-server ul li span {
+  transition: opacity 0.3s;
+}
+
 /* Responsive: collapse sidebar trên mobile */
 @media (max-width: 768px) {
   .sidebar-server {
@@ -69,15 +77,20 @@
   }
 
   .sidebar-server h2 {
-    display: none; /* ẩn tên */
+    display: none;
   }
 
-  .sidebar-server li {
+  .sidebar-server ul li {
     justify-content: center;
     padding: 10px;
   }
 
-  .sidebar-server li span {
+  .sidebar-server ul li span {
     display: none; /* chỉ còn icon */
+  }
+
+  .sidebar-server ul li.active {
+    border-radius: 50%;
+    padding: 12px;
   }
 }

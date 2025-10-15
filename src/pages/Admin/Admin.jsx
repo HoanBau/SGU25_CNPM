@@ -133,7 +133,28 @@ const Admin = () => {
             {showFoodStats ? (
               <div className="top-foods">
                 <h2>🍲 Chi tiết món bán được</h2>
-                {/* ... các bộ lọc & danh sách món */}
+                <table className="food-table">
+      <thead>
+        <tr>
+          <th>Món ăn</th>
+          <th>Số phần bán được</th>
+        </tr>
+      </thead>
+      <tbody>
+        {filteredFoods.length === 0 ? (
+          <tr>
+            <td colSpan={2}>Chưa có món nào</td>
+          </tr>
+        ) : (
+          filteredFoods.map((f) => (
+            <tr key={f.id}>
+              <td>{f.name}</td>
+              <td>{f.qty}</td>
+            </tr>
+          ))
+        )}
+      </tbody>
+    </table>
               </div>
             ) : (
               <div className="admin-chart">
