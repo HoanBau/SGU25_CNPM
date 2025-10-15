@@ -67,18 +67,9 @@ const Admin = () => {
   }, [filter, selectedDate, availableDates]);
 
   const totalFoodsSold = useMemo(() => {
-    let total = 0;
-    const today = new Date();
-    for (const stats of Object.values(foodCount)) {
-      if (filter === "day" && selectedDate) total += stats.daily[selectedDate] || 0;
-      else if (filter === "month")
-        total += stats.monthly[`${today.getMonth() + 1}/${today.getFullYear()}`] || 0;
-      else if (filter === "year")
-        total += stats.yearly[`${today.getFullYear()}`] || 0;
-      else total += stats.total;
-    }
-    return total;
-  }, [foodCount, filter, selectedDate]);
+  // ✅ Luôn tính tổng tất cả món ăn đã bán (bỏ qua filter)
+  return Object.values(foodCount).reduce((sum, stats) => sum + stats.total, 0);
+}, [foodCount]);
 
   const filteredFoods = useMemo(() => {
     const today = new Date();
@@ -126,7 +117,7 @@ const Admin = () => {
                 onClick={() => setShowFoodStats(!showFoodStats)}
               >
                 <h2>{totalFoodsSold}</h2>
-                <p>Tổng món bán được 🍽️</p>
+                <p>Tổng món bán được </p>
               </div>
             </div>
 
