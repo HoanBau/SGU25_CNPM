@@ -377,7 +377,7 @@
 }
 
 /* -------------------- Responsive -------------------- */
-@media (max-width: 600px) {
+/* @media (max-width: 600px) {
   .orders-title {
     font-size: 22px;
   }
@@ -394,5 +394,35 @@
     padding: 8px 14px;
     font-size: 14px;
   }
-} 
+}  */
 
+
+.revenue-details {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.revenue-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.revenue-table th,
+.revenue-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.revenue-table th {
+  background-color: #f5f5f5;
+}
+
+.stat-card.clickable:hover {
+  background: #f0f8ff;
+  cursor: pointer;
+}

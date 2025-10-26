@@ -1,150 +1,229 @@
-/* Stores.css - cải tiến giao diện chuyên nghiệp & responsive */
-.stores {
+/* ========== GLOBAL ========== */
+.stores-grab {
+  font-family: "Segoe UI", Arial, sans-serif;
   padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f9f9f9;
-  min-height: 100vh;
+  color: #222;
+  background: #fafafa;
 }
 
-.stores h1 {
+h1 {
+  text-align: center;
   margin-bottom: 20px;
-  font-size: 28px;
-  color: #333;
+  color: #2a7ae2;
 }
 
-/* Form thêm cửa hàng */
-.store-form {
+h2 {
+  margin-top: 30px;
+  color: #1f5ca8;
+}
+
+/* ========== PANEL ========== */
+.panel {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.panel h2 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ========== FORM INPUT ========== */
+.form-inline {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 25px;
 }
 
-.store-form input,
-.store-form select {
-  padding: 10px 15px;
+.form-inline input {
   flex: 1;
-  border-radius: 6px;
+  min-width: 150px;
+  padding: 8px 10px;
   border: 1px solid #ccc;
-  font-size: 14px;
-  transition: border 0.3s;
+  border-radius: 6px;
+  transition: border-color 0.2s;
 }
 
-.store-form input:focus,
-.store-form select:focus {
+.form-inline input:focus {
+  border-color: #2a7ae2;
   outline: none;
-  border-color: #4caf50;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
 }
 
-.store-form button {
-  padding: 10px 20px;
+.form-inline button {
+  padding: 8px 14px;
+  background: #2a7ae2;
   border: none;
-  background-color: #4caf50;
   color: white;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s, transform 0.2s;
+  font-weight: 600;
+  transition: 0.25s;
 }
 
-.store-form button:hover {
-  background-color: #43a047;
-  transform: translateY(-2px);
+.form-inline button:hover {
+  background: #1c5bbf;
 }
 
-/* Bảng cửa hàng */
-.stores-table {
+/* ========== STATS ========== */
+.stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-around;
+  text-align: center;
+}
+
+.stat {
+  background: #f0f4ff;
+  padding: 16px 20px;
+  border-radius: 10px;
+  flex: 1 1 160px;
+  min-width: 160px;
+}
+
+.stat-title {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1f5ca8;
+}
+
+/* ========== TABLES ========== */
+table {
   width: 100%;
   border-collapse: collapse;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  border-radius: 8px;
-  overflow: hidden;
-  background-color: white;
-}
-
-.stores-table th,
-.stores-table td {
-  border-bottom: 1px solid #eee;
-  padding: 12px 15px;
-  text-align: left;
+  margin-top: 12px;
   font-size: 14px;
-  color: #555;
 }
 
-.stores-table th {
-  background-color: #f1f1f1;
+th,
+td {
+  border: 1px solid #e3e3e3;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+th {
+  background: #f5f7fa;
   font-weight: 600;
-  color: #333;
 }
 
-.stores-table tr:hover {
-  background-color: #f9f9f9;
-}
-
-/* Nút hành động */
-.stores-table button {
-  padding: 6px 12px;
-  border-radius: 6px;
+td input {
+  width: 100%;
   border: none;
+  background: #fff;
+  text-align: center;
+  padding: 4px;
+}
+
+td input:focus {
+  outline: 1px solid #2a7ae2;
+  border-radius: 4px;
+}
+
+/* ========== BUTTONS ========== */
+button {
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
+  padding: 6px 10px;
   font-size: 13px;
-  transition: all 0.3s;
+  margin: 2px;
+  transition: background 0.25s, transform 0.1s;
 }
 
-.stores-table button:first-of-type {
-  background-color: #2196f3;
-  color: white;
+button:hover {
+  transform: scale(1.05);
 }
 
-.stores-table button:first-of-type:hover {
-  background-color: #1e88e5;
-  transform: translateY(-1px);
+button:active {
+  transform: scale(0.97);
 }
 
-.stores-table button:last-of-type {
-  background-color: #f44336;
-  color: white;
+button[onClick*="delete"],
+button:has(> svg) {
+  background: #ff5757;
+  color: #fff;
 }
 
-.stores-table button:last-of-type:hover {
-  background-color: #e53935;
-  transform: translateY(-1px);
+button[onClick*="delete"]:hover {
+  background: #d63c3c;
 }
 
-/* Responsive */
+/* ========== TABLE SCROLL ========== */
+.stores-table,
+.orders-table {
+  overflow-x: auto;
+  display: block;
+  max-width: 100%;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1024px) {
+  .form-inline input {
+    flex: 1 1 45%;
+  }
+}
+
 @media (max-width: 768px) {
-  .store-form {
+  .stats-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  table {
+    font-size: 13px;
+  }
+
+  th,
+  td {
+    padding: 6px;
+  }
+
+  .form-inline {
     flex-direction: column;
   }
 
-  .store-form input,
-  .store-form select,
-  .store-form button {
+  .form-inline input,
+  .form-inline button {
     width: 100%;
   }
 
-  .stores-table th,
-  .stores-table td {
-    padding: 10px;
-    font-size: 13px;
+  button {
+    width: 100%;
   }
 }
 
 @media (max-width: 480px) {
-  .stores h1 {
-    font-size: 22px;
+  h1 {
+    font-size: 20px;
   }
 
-  .stores-table th,
-  .stores-table td {
-    padding: 8px;
+  h2 {
+    font-size: 16px;
+  }
+
+  .stat-value {
+    font-size: 16px;
+  }
+
+  .panel {
+    padding: 14px;
+  }
+
+  td,
+  th {
     font-size: 12px;
-  }
-
-  .store-form input,
-  .store-form select,
-  .store-form button {
-    padding: 8px;
   }
 }

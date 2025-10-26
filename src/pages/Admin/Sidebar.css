@@ -57,6 +57,8 @@
   text-align: center;
   color: #888;
 }
+
+
  /* Responsive: collapse sidebar trên mobile */
 @media (max-width: 768px) {
   .sidebar {

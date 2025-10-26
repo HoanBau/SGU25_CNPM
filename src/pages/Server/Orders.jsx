@@ -20,7 +20,7 @@ const userLocations = {
   "Dave": [10.7820, 106.7030],
 };
 
-// LocalStorage helpers
+// Lấy dữ liệu từ LocalStorage
 const getOrdersFromStorage = () => {
   const data = localStorage.getItem(ORDERS_KEY);
   return data
@@ -44,12 +44,12 @@ const getDronesFromStorage = () => {
       ];
 };
 
-// Translate functions
+// Dịch trạng thái
 const translateOrderStatus = (status) => {
   switch (status) {
-    case "pending": return "Đang chờ";
-    case "delivering": return "Đang giao";
-    case "done": return "Hoàn thành";
+    case "pending": return "🕓 Đang chờ";
+    case "delivering": return "🚁 Đang giao";
+    case "done": return "✅ Hoàn thành";
     default: return status;
   }
 };
@@ -62,7 +62,7 @@ const translateDroneStatus = (status) => {
   }
 };
 
-// Icon drone lớn hơn
+// Icon
 const droneIcon = L.icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/414/414927.png",
   iconSize: [40, 40],
@@ -85,7 +85,7 @@ const Orders = () => {
 
   const startDelivery = (orderId, droneName) => {
     const order = orders.find(o => o.id === orderId);
-    if (!droneName) return alert("Chọn drone trước!");
+    if (!droneName) return alert("🚨 Chọn drone trước khi giao hàng!");
 
     const start = storeLocations[order.store];
     const end = userLocations[order.user];
@@ -103,7 +103,7 @@ const Orders = () => {
 
       if (step >= steps) {
         clearInterval(interval);
-        alert(`${droneName} giao hàng thành công!`);
+        alert(`✅ ${droneName} đã giao hàng thành công cho ${order.user}!`);
 
         // Drone quay về
         let backStep = 0;
@@ -126,25 +126,13 @@ const Orders = () => {
     const reset = orders.map(o => ({ ...o, status: "pending", drone: "", dronePos: null }));
     setOrders(reset);
     setDrones(d => d.map(dr => ({ ...dr, status: "ready" })));
-    alert("✅ Đã khởi tạo lại tất cả đơn hàng và drone!");
+    alert("🔄 Đã khởi tạo lại tất cả đơn hàng và drone!");
   };
 
   return (
     <div className="orders-container">
-      <style>{`
-        .orders-container { font-family: Arial; padding: 20px; }
-        .orders-container h1 { margin-bottom: 20px; }
-        .orders-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        .orders-table th, .orders-table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        .orders-table th { background-color: #f2f2f2; }
-        .orders-table select { padding: 4px; }
-        .orders-table button { margin-left: 5px; padding: 4px 8px; }
-        .map-container { height: 400px; width: 100%; border: 1px solid #ddd; border-radius: 8px; }
-        .reset-btn { margin-bottom: 10px; padding: 6px 12px; background-color: #ff6666; color: white; border: none; border-radius: 4px; cursor: pointer; }
-      `}</style>
-
-      <h1>📝 Quản lý đơn hàng với Drone</h1>
-      <button className="reset-btn" onClick={resetOrders}>🔄 Khởi tạo lại đơn hàng</button>
+      <h1>📦 Quản lý đơn hàng Drone</h1>
+      <button className="reset-btn" onClick={resetOrders}>🔁 Khởi tạo lại</button>
 
       <table className="orders-table">
         <thead>
@@ -163,18 +151,27 @@ const Orders = () => {
               <td>{order.id}</td>
               <td>{order.store}</td>
               <td>{order.user}</td>
-              <td>{translateOrderStatus(order.status)}</td>
+              <td className={`status ${order.status}`}>{translateOrderStatus(order.status)}</td>
               <td>{order.drone}</td>
               <td>
                 {order.status !== "done" && (
                   <>
-                    <select value={order.drone} onChange={e => setOrders(o => o.map(or => or.id === order.id ? { ...or, drone: e.target.value } : or))}>
+                    <select
+                      value={order.drone}
+                      onChange={e =>
+                        setOrders(o =>
+                          o.map(or => or.id === order.id ? { ...or, drone: e.target.value } : or)
+                        )
+                      }
+                    >
                       <option value="">Chọn drone</option>
                       {drones.filter(d => d.status === "ready" || d.name === order.drone).map(d => (
                         <option key={d.name} value={d.name}>{d.name} ({translateDroneStatus(d.status)})</option>
                       ))}
                     </select>
-                    <button onClick={() => startDelivery(order.id, order.drone)}>Giao hàng</button>
+                    <button className="start-btn" onClick={() => startDelivery(order.id, order.drone)}>
+                      🚀 Giao hàng
+                    </button>
                   </>
                 )}
               </td>
@@ -183,17 +180,101 @@ const Orders = () => {
         </tbody>
       </table>
 
-      <MapContainer className="map-container" center={[10.779, 106.702]} zoom={16}>
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        {Object.entries(storeLocations).map(([name, pos]) => <Marker key={name} position={pos} icon={storeIcon} />)}
-        {Object.entries(userLocations).map(([name, pos]) => <Marker key={name} position={pos} icon={userIcon} />)}
-        {orders.map(o => o.dronePos && (
-          <Marker key={o.id} position={o.dronePos} icon={droneIcon}>
-            <Popup>{o.drone} đang giao {o.user}</Popup>
-          </Marker>
-        ))}
-        {orders.map(o => o.dronePos && <Polyline key={o.id} positions={[storeLocations[o.store], userLocations[o.user]]} color="blue" />)}
-      </MapContainer>
+      <div className="map-wrapper">
+        <MapContainer className="map-container" center={[10.779, 106.702]} zoom={16}>
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          {Object.entries(storeLocations).map(([name, pos]) => <Marker key={name} position={pos} icon={storeIcon} />)}
+          {Object.entries(userLocations).map(([name, pos]) => <Marker key={name} position={pos} icon={userIcon} />)}
+          {orders.map(o => o.dronePos && (
+            <Marker key={o.id} position={o.dronePos} icon={droneIcon}>
+              <Popup>{o.drone} đang giao cho {o.user}</Popup>
+            </Marker>
+          ))}
+          {orders.map(o => o.dronePos && (
+            <Polyline key={o.id} positions={[storeLocations[o.store], userLocations[o.user]]} color="blue" />
+          ))}
+        </MapContainer>
+      </div>
+
+      <style>{`
+        .orders-container {
+          font-family: 'Segoe UI', sans-serif;
+          padding: 20px;
+          background: #f9fafb;
+          min-height: 100vh;
+        }
+        h1 {
+          text-align: center;
+          margin-bottom: 20px;
+          color: #2d3748;
+        }
+        .reset-btn {
+          background: #e53e3e;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          padding: 8px 16px;
+          cursor: pointer;
+          display: block;
+          margin: 0 auto 20px;
+          transition: 0.3s;
+        }
+        .reset-btn:hover { background: #c53030; }
+
+        .orders-table {
+          width: 100%;
+          border-collapse: collapse;
+          background: white;
+          border-radius: 10px;
+          overflow: hidden;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        th, td {
+          border: 1px solid #e2e8f0;
+          padding: 10px 50px;
+          text-align: center;
+        }
+        th {
+          background-color: #edf2f7;
+          color: #2d3748;
+        }
+        td select {
+          padding: 5px;
+          border-radius: 5px;
+        }
+        .start-btn {
+          background: #3182ce;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          padding: 6px 10px;
+          margin-left: 5px;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+        .start-btn:hover { background: #2b6cb0; }
+
+        .status.pending { color: #d69e2e; font-weight: bold; }
+        .status.delivering { color: #3182ce; font-weight: bold; }
+        .status.done { color: #38a169; font-weight: bold; }
+
+        .map-wrapper {
+          margin-top: 20px;
+        }
+        .map-container {
+          height: 420px;
+          width: 100%;
+          border-radius: 12px;
+          border: 2px solid #e2e8f0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+          th, td { font-size: 14px; padding: 8px; }
+          .start-btn, .reset-btn { font-size: 14px; padding: 6px 10px; }
+          .map-container { height: 300px; }
+        }
+      `}</style>
     </div>
   );
 };

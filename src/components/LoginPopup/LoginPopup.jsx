@@ -27,7 +27,7 @@ const LoginPopup = ({ setShowLogin, setUser }) => {
     // 🧠 Nếu đăng nhập là server hoặc admin
     if (emailInput === "server@foodfast.com" && passwordInput === "server123") {
       const serverUser = {
-        name: "Server Admin",
+        name: "Admin",
         avatar: assets.user_icon,
         role: "server",
         email: emailInput,
@@ -41,7 +41,7 @@ const LoginPopup = ({ setShowLogin, setUser }) => {
 
     if (emailInput === "admin@foodfast.com" && passwordInput === "admin123") {
       const adminUser = {
-        name: "Admin",
+        name: "Restaurant",
         avatar: assets.user_icon,
         role: "admin",
         email: emailInput,

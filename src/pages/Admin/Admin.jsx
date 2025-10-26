@@ -21,26 +21,32 @@ const Admin = () => {
 
   const [currentView, setCurrentView] = useState("dashboard");
   const [showFoodStats, setShowFoodStats] = useState(false);
+  const [showRevenueDetails, setShowRevenueDetails] = useState(false);
+
+  const COMMISSION_RATE = 0.3; // 💸 Chiết khấu 30% cho Grab
 
   // --- Gom dữ liệu tổng quan & món ăn ---
-  const { totalOrders, uniqueUsers, revenue, foodCount } = useMemo(() => {
-    const totalOrders = orders.length;
-    const uniqueUsers = new Set(orders.map((o) => o.email)).size;
-    const revenue = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
-    const foodCount = {};
+  const { totalOrders, uniqueUsers, revenue, grabCommission, restaurantRevenue, foodCount } =
+    useMemo(() => {
+      const totalOrders = orders.length;
+      const uniqueUsers = new Set(orders.map((o) => o.email)).size;
+      const revenue = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
 
-    // ✅ Gom toàn bộ số phần từng món ăn từ tất cả đơn hàng
-    orders.forEach((order) => {
-      if (order.items) {
-        Object.entries(order.items).forEach(([foodId, qty]) => {
-          if (!foodCount[foodId]) foodCount[foodId] = 0;
-          foodCount[foodId] += qty;
-        });
-      }
-    });
+      const grabCommission = revenue * COMMISSION_RATE;
+      const restaurantRevenue = revenue - grabCommission;
 
-    return { totalOrders, uniqueUsers, revenue, foodCount };
-  }, [orders]);
+      const foodCount = {};
+      orders.forEach((order) => {
+        if (order.items) {
+          Object.entries(order.items).forEach(([foodId, qty]) => {
+            if (!foodCount[foodId]) foodCount[foodId] = 0;
+            foodCount[foodId] += qty;
+          });
+        }
+      });
+
+      return { totalOrders, uniqueUsers, revenue, grabCommission, restaurantRevenue, foodCount };
+    }, [orders]);
 
   // ✅ Tổng tất cả món ăn đã bán (không theo ngày)
   const totalFoodsSold = useMemo(() => {
@@ -80,9 +86,12 @@ const Admin = () => {
                 <h2>{uniqueUsers}</h2>
                 <p>Người dùng</p>
               </div>
-              <div className="stat-card">
+              <div
+                className="stat-card clickable"
+                onClick={() => setShowRevenueDetails(!showRevenueDetails)}
+              >
                 <h2>{revenue.toLocaleString("vi-VN")} ₫</h2>
-                <p>Doanh thu</p>
+                <p>Doanh thu (click để xem chi tiết)</p>
               </div>
               <div
                 className="stat-card clickable"
@@ -93,7 +102,59 @@ const Admin = () => {
               </div>
             </div>
 
-            {showFoodStats ? (
+            {/* 💰 Chi tiết doanh thu */}
+            {showRevenueDetails && (
+              <div className="revenue-details">
+                <h2>💸 Chi tiết doanh thu & chiết khấu</h2>
+                <table className="revenue-table">
+                  <tbody>
+                    <tr>
+                      <td><b>Tổng doanh thu (Khách thanh toán):</b></td>
+                      <td>{revenue.toLocaleString("vi-VN")} ₫</td>
+                    </tr>
+                    <tr>
+                      <td><b>Chiết khấu Grab (30%):</b></td>
+                      <td>{grabCommission.toLocaleString("vi-VN")} ₫</td>
+                    </tr>
+                    <tr>
+                      <td><b>Doanh thu Nhà hàng nhận:</b></td>
+                      <td>{restaurantRevenue.toLocaleString("vi-VN")} ₫</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <h3>📄 Bảng chi tiết từng đơn</h3>
+                <table className="revenue-table">
+                  <thead>
+                    <tr>
+                      <th>Mã đơn</th>
+                      <th>Tổng tiền</th>
+                      <th>Chiết khấu Grab</th>
+                      <th>Nhà hàng nhận</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orders.length === 0 ? (
+                      <tr>
+                        <td colSpan="4">Chưa có đơn hàng nào</td>
+                      </tr>
+                    ) : (
+                      orders.map((o, i) => (
+                        <tr key={o.id || i}>
+                          <td>{o.id || `#${i + 1}`}</td>
+                          <td>{(o.totalAmount || 0).toLocaleString("vi-VN")} ₫</td>
+                          <td>{((o.totalAmount || 0) * COMMISSION_RATE).toLocaleString("vi-VN")} ₫</td>
+                          <td>{((o.totalAmount || 0) * (1 - COMMISSION_RATE)).toLocaleString("vi-VN")} ₫</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* 🍲 Chi tiết món bán được */}
+            {showFoodStats && (
               <div className="top-foods">
                 <h2>🍲 Chi tiết món bán được (Tổng từ trước đến nay)</h2>
                 <table className="food-table">
@@ -119,7 +180,10 @@ const Admin = () => {
                   </tbody>
                 </table>
               </div>
-            ) : (
+            )}
+
+            {/* 📈 Biểu đồ doanh thu */}
+            {!showFoodStats && !showRevenueDetails && (
               <div className="admin-chart">
                 <RevenueChart orders={orders} />
               </div>
@@ -127,7 +191,7 @@ const Admin = () => {
           </>
         )}
 
-        {/* ✅ Các phần khác giữ nguyên */}
+        {/* ✅ Các phần khác */}
         {currentView === "orders" && <OrderList orders={orders} setOrders={setOrders} />}
         {currentView === "manageFood" && <ManageFood />}
         {currentView === "drone" && <DroneMap />}
