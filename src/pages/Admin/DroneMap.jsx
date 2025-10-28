@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -11,29 +11,27 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./DroneMap.css";
 
-// 🏠 Tọa độ quán
-const storePos = [10.762622, 106.660172]; // Quán demo: SG
+// 📍 Tọa độ quán (drone bắt đầu tại đây)
+const storePos = [10.762622, 106.660172];
 
-// Icon
+// 🖼️ Icon
 const droneIcon = new L.Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/2010/2010887.png",
   iconSize: [40, 40],
   iconAnchor: [20, 20],
 });
-
 const storeIcon = new L.Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/1046/1046784.png",
   iconSize: [40, 40],
   iconAnchor: [20, 40],
 });
-
 const destIcon = new L.Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
   iconSize: [40, 40],
   iconAnchor: [20, 40],
 });
 
-// 📍 Chọn vị trí trực tiếp bằng click
+// 📍 Click chọn vị trí khách hàng (nếu không bận)
 const LocationPicker = ({ setDeliveryPos, disabled }) => {
   useMapEvents({
     click(e) {
@@ -45,13 +43,11 @@ const LocationPicker = ({ setDeliveryPos, disabled }) => {
   return null;
 };
 
-// 🔍 Di chuyển bản đồ đến vị trí mới khi nhập địa chỉ
+// 🗺️ Khi có vị trí mới, map flyTo đó
 const FlyToLocation = ({ position }) => {
   const map = useMap();
   useEffect(() => {
-    if (position) {
-      map.flyTo(position, 15, { duration: 2 });
-    }
+    if (position) map.flyTo(position, 15, { duration: 1.2 });
   }, [position]);
   return null;
 };
@@ -60,146 +56,249 @@ const DroneMap = () => {
   const [dronePos, setDronePos] = useState(storePos);
   const [deliveryPos, setDeliveryPos] = useState(null);
   const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState("Chưa chọn địa điểm giao hàng.");
-  const [direction, setDirection] = useState("idle");
+  const [status, setStatus] = useState("🚁 Drone đang chờ tại quán.");
+  const [direction, setDirection] = useState("idle"); // idle | toCustomer
   const [address, setAddress] = useState("");
 
-  const isBusy = direction !== "idle"; // ❌ Không cho chọn nếu đang giao hàng hoặc quay về
+  // Danh sách đơn (lấy từ localStorage hoặc giả lập)
+  const [readyOrders, setReadyOrders] = useState([]);
+  const [completedOrders, setCompletedOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
-  // 🚁 Giả lập drone bay
+  const [showReady, setShowReady] = useState(true);
+  const [showCompleted, setShowCompleted] = useState(false);
+
+  const isBusy = direction !== "idle";
+
+  // Ref tránh stale closure
+  const dronePosRef = useRef(dronePos);
+  useEffect(() => { dronePosRef.current = dronePos; }, [dronePos]);
+
+  // Load dữ liệu
   useEffect(() => {
-    if (!deliveryPos || direction === "idle") return;
+    const saved = JSON.parse(localStorage.getItem("drones_data"));
+    if (Array.isArray(saved) && saved.length) {
+      setReadyOrders(saved);
+    } else {
+      // demo data
+      const demo = [
+        { id: 201, email: "alice@example.com", totalAmount: 120000, customerLocation: [10.7668, 106.6620] },
+        { id: 202, email: "bob@example.com", totalAmount: 85000, customerLocation: [10.7595, 106.6590] },
+      ];
+      setReadyOrders(demo);
+      localStorage.setItem("drones_data", JSON.stringify(demo));
+    }
+  }, []);
 
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        let newProgress = prev;
+  // Helper tính khoảng cách (km)
+  const calcDistanceKm = (pos1, pos2) => {
+    if (!pos1 || !pos2) return 0;
+    const R = 6371;
+    const dLat = ((pos2[0] - pos1[0]) * Math.PI) / 180;
+    const dLon = ((pos2[1] - pos1[1]) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((pos1[0] * Math.PI) / 180) *
+        Math.cos((pos2[0] * Math.PI) / 180) *
+        Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  };
 
-        if (direction === "toCustomer") {
-          if (prev >= 1) {
-            setStatus("✅ Đã giao hàng thành công!");
-            setTimeout(() => {
-              setDirection("toStore");
-              setStatus("🔙 Đang quay về quán...");
-              setProgress(0);
-            }, 2000);
-            return 1;
-          }
-          newProgress = prev + 0.005;
-          const lat = storePos[0] + (deliveryPos[0] - storePos[0]) * newProgress;
-          const lng = storePos[1] + (deliveryPos[1] - storePos[1]) * newProgress;
-          setDronePos([lat, lng]);
-        } else if (direction === "toStore") {
-          if (prev >= 1) {
-            setStatus("🏁 Đã trở về quán, sẵn sàng giao đơn mới!");
-            setDirection("idle");
-            setDeliveryPos(null);
-            return 1;
-          }
-          newProgress = prev + 0.005;
-          const lat = deliveryPos[0] + (storePos[0] - deliveryPos[0]) * newProgress;
-          const lng = deliveryPos[1] + (storePos[1] - deliveryPos[1]) * newProgress;
-          setDronePos([lat, lng]);
-        }
+  const calcETA = (distanceKm, speedKmH = 40) => {
+    const minutes = Math.max(1, Math.round((distanceKm / speedKmH) * 60));
+    return `${minutes} phút`;
+  };
 
-        return newProgress;
-      });
-    }, 100);
+  // 🛫 Di chuyển drone
+  useEffect(() => {
+    if (direction !== "toCustomer") return;
+    if (!deliveryPos) return;
 
-    return () => clearInterval(interval);
+    let cancelled = false;
+    const stepFactor = 0.01;
+    const tickMs = 100;
+
+    const id = setInterval(() => {
+      if (cancelled) return;
+      const cur = dronePosRef.current || storePos;
+      const [lat, lng] = cur;
+      const [targetLat, targetLng] = deliveryPos;
+      const latDiff = targetLat - lat;
+      const lngDiff = targetLng - lng;
+      const dist = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
+
+      // Đến nơi
+      if (dist < 0.0001) {
+        setStatus("✅ Giao hàng thành công!");
+        setCompletedOrders((prev) => [
+          ...prev,
+          { ...selectedOrder, deliveredAt: new Date().toLocaleTimeString() },
+        ]);
+        setReadyOrders((prev) => prev.filter((o) => o.id !== selectedOrder?.id));
+        setSelectedOrder(null);
+        setDirection("idle");
+        setProgress(1);
+        clearInterval(id);
+        return;
+      }
+
+      // Di chuyển
+      const nextLat = lat + latDiff * stepFactor;
+      const nextLng = lng + lngDiff * stepFactor;
+      setDronePos([nextLat, nextLng]);
+      setProgress((prev) => Math.min(1, prev + stepFactor));
+    }, tickMs);
+
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
   }, [direction, deliveryPos]);
 
-  const handleStartDelivery = () => {
-    if (!deliveryPos) {
-      alert("⚠️ Vui lòng chọn địa điểm giao hàng (bằng click hoặc nhập địa chỉ)!");
+  // 🧾 Chọn đơn
+  const handleSelectOrder = (order) => {
+    if (isBusy) {
+      alert("🚫 Drone đang bận, vui lòng chờ.");
       return;
     }
-    setStatus("🚁 Đang bay đến điểm giao hàng...");
+    if (!order.customerLocation) {
+      alert("⚠️ Đơn này chưa có tọa độ khách.");
+      return;
+    }
+    setSelectedOrder(order);
+    setDeliveryPos(order.customerLocation);
+    setStatus(`📦 Đã chọn đơn #${order.id}. Sẵn sàng gửi drone.`);
+  };
+
+  // 🚀 Bắt đầu bay
+  const handleStartDelivery = () => {
+    if (!selectedOrder) {
+      alert("⚠️ Vui lòng chọn đơn trước khi gửi drone.");
+      return;
+    }
+    setStatus("🚁 Drone rời quán, đến giao cho khách...");
     setDirection("toCustomer");
     setProgress(0);
   };
 
-  // 📦 Nhập địa chỉ rồi tìm tọa độ (geocoding)
+  // 🔍 Tìm vị trí theo địa chỉ (nếu nhập tay)
   const handleSearchAddress = async () => {
     if (!address.trim()) return;
-
-    if (isBusy) {
-      alert("🚫 Drone đang giao hàng, vui lòng chờ quay về quán trước khi chọn địa điểm mới!");
-      return;
-    }
+    if (isBusy) return alert("🚫 Drone đang bận");
 
     try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          address
-        )}`
-      );
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
       const data = await res.json();
       if (data.length > 0) {
         const lat = parseFloat(data[0].lat);
         const lon = parseFloat(data[0].lon);
         setDeliveryPos([lat, lon]);
-        setStatus("📍 Đã chọn địa chỉ giao hàng!");
-      } else {
-        alert("Không tìm thấy địa chỉ này. Hãy thử lại!");
-      }
-    } catch (err) {
-      console.error("Lỗi khi tìm địa chỉ:", err);
+        setStatus("📍 Đã chọn vị trí giao hàng (thủ công).");
+      } else alert("Không tìm thấy địa chỉ.");
+    } catch {
+      alert("Lỗi khi tìm địa chỉ.");
     }
   };
 
+  // Lưu danh sách vào localStorage
+  useEffect(() => {
+    localStorage.setItem("drones_data", JSON.stringify(readyOrders));
+  }, [readyOrders]);
+
   return (
     <div className="drone-map-container">
-      <h2>🚁 Mô phỏng Drone giao hàng</h2>
+      <h2>🚁 Mô phỏng Drone giao hàng </h2>
+
+      <div className="order-sections">
+        <div className="order-toggle">
+          <h3 onClick={() => setShowReady(!showReady)} style={{ cursor: "pointer" }}>
+            📦 Đơn chưa giao {showReady ? "▲" : "▼"}
+          </h3>
+          {showReady && (
+            <ul>
+              {readyOrders.length === 0 ? (
+                <p>Không có đơn nào.</p>
+              ) : (
+                readyOrders.map((order) => {
+                  const distKm = calcDistanceKm(storePos, order.customerLocation || storePos);
+                  return (
+                    <li key={order.id}>
+                      <b>#{order.id}</b> – {order.email} – {order.totalAmount.toLocaleString("vi-VN")} ₫
+                      <br />
+                      🎯 {distKm.toFixed(2)} km • ETA: {calcETA(distKm)}
+                      <br />
+                      <button onClick={() => handleSelectOrder(order)} disabled={isBusy}>
+                        Chọn
+                      </button>
+                    </li>
+                  );
+                })
+              )}
+            </ul>
+          )}
+        </div>
+
+        <div className="order-toggle">
+          <h3 onClick={() => setShowCompleted(!showCompleted)} style={{ cursor: "pointer" }}>
+            ✅ Đơn đã giao {showCompleted ? "▲" : "▼"}
+          </h3>
+          {showCompleted && (
+            <ul>
+              {completedOrders.length === 0 ? (
+                <p>Chưa có đơn nào hoàn tất.</p>
+              ) : (
+                completedOrders.map((order) => (
+                  <li key={order.id}>
+                    <b>#{order.id}</b> – {order.email} – {order.totalAmount.toLocaleString("vi-VN")} ₫
+                    <br />🕓 Giao lúc: {order.deliveredAt}
+                  </li>
+                ))
+              )}
+            </ul>
+          )}
+        </div>
+      </div>
 
       <div className="address-input">
         <input
           type="text"
-          placeholder="Nhập địa chỉ giao hàng..."
+          placeholder="Nhập địa chỉ giao hàng (nếu muốn chọn thủ công)..."
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           disabled={isBusy}
         />
-        <button onClick={handleSearchAddress} disabled={isBusy}>
-          Tìm địa chỉ
-        </button>
+        <button onClick={handleSearchAddress} disabled={isBusy || !address}>Tìm</button>
       </div>
 
       <p>
         <b>Trạng thái:</b> {status}
         <br />
         <b>Tiến độ:</b> {Math.round(progress * 100)}%
+        {selectedOrder && <><br /><b>Đơn đang xử lý:</b> #{selectedOrder.id}</>}
       </p>
 
       <button
         className="start-button"
         onClick={handleStartDelivery}
-        disabled={direction !== "idle" || !deliveryPos}
+        disabled={direction !== "idle" || !selectedOrder}
       >
-        {direction === "idle" ? "Bắt đầu giao hàng" : "Đang giao..."}
+        {direction === "idle" ? "Gửi drone giao đơn" : "Drone đang bay..."}
       </button>
 
-      <MapContainer
-        center={storePos}
-        zoom={14}
-        style={{ height: "75vh", width: "100%", borderRadius: "12px" }}
-      >
+      <MapContainer center={storePos} zoom={14} style={{ height: "65vh", width: "100%", borderRadius: 12 }}>
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+          attribution='&copy; OpenStreetMap'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-
         <LocationPicker setDeliveryPos={setDeliveryPos} disabled={isBusy} />
         {deliveryPos && <FlyToLocation position={deliveryPos} />}
 
-        <Marker position={storePos} icon={storeIcon}></Marker>
-        {deliveryPos && <Marker position={deliveryPos} icon={destIcon}></Marker>}
-        <Marker position={dronePos} icon={droneIcon}></Marker>
+        <Marker position={storePos} icon={storeIcon} />
+        {deliveryPos && <Marker position={deliveryPos} icon={destIcon} />}
+        {dronePos && <Marker position={dronePos} icon={droneIcon} />}
 
-        {deliveryPos && (
-          <Polyline
-            positions={[storePos, deliveryPos]}
-            color={direction === "toStore" ? "green" : "blue"}
-          />
+        {direction === "toCustomer" && deliveryPos && (
+          <Polyline positions={[dronePos, deliveryPos]} color="blue" />
         )}
       </MapContainer>
     </div>

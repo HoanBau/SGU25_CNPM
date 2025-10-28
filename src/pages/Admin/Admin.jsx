@@ -5,6 +5,8 @@ import RevenueChart from "./RevenueChart";
 import OrderList from "./OrderList";
 import DroneMap from "./DroneMap";
 import ManageFood from "./ManageFood";
+import StoreSetting from "./StoreSetting";
+import StoreRevenue from "./StoreRevenue"; 
 import { food_list } from "../../assets/assets";
 
 const Admin = () => {
@@ -37,10 +39,11 @@ const Admin = () => {
 
       const foodCount = {};
       orders.forEach((order) => {
-        if (order.items) {
+        // ✅ Sửa: kiểm tra order.items tồn tại và là object
+        if (order.items && typeof order.items === "object" && !Array.isArray(order.items)) {
           Object.entries(order.items).forEach(([foodId, qty]) => {
             if (!foodCount[foodId]) foodCount[foodId] = 0;
-            foodCount[foodId] += qty;
+            foodCount[foodId] += Number(qty) || 0; // đảm bảo là số
           });
         }
       });
@@ -195,6 +198,9 @@ const Admin = () => {
         {currentView === "orders" && <OrderList orders={orders} setOrders={setOrders} />}
         {currentView === "manageFood" && <ManageFood />}
         {currentView === "drone" && <DroneMap />}
+        {currentView === "settings" && <StoreSetting />}
+        {currentView === "earnings" && <StoreRevenue restaurantRevenue={restaurantRevenue} />}
+
       </div>
     </div>
   );

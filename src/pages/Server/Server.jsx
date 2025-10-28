@@ -5,6 +5,7 @@ import Stores from "./Stores";
 import Orders from "./Orders";
 import Drones from "./Drones";
 import Users from "./Users"; // import component mới
+import RevenuesServer from "./RevenuesServer";
 
 // LocalStorage keys
 const LS_STORES = "app_stores";
@@ -77,6 +78,9 @@ const Server = () => {
         return <Drones drones={drones} setDrones={setDrones} />;
       case "users":
         return <Users users={users} setUsers={setUsers} />;
+      case "revenues":
+  return <RevenuesServer stores={stores} />;
+
       default:
         return <Dashboard stores={stores} orders={orders} drones={drones} />;
     }

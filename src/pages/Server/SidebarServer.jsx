@@ -21,14 +21,14 @@ const SidebarServer = ({ setView, currentView }) => {
           🏪 Danh sách cửa hàng
         </li>
 
-        <li
+        {/* <li
           className={currentView === "orders" ? "active" : ""}
           onClick={() => setView("orders")}
         >
           📝 Quản lý đơn hàng
-        </li>
+        </li> */}
 
-         {/* Thêm quản lý người dùng */}
+        {/* Thêm quản lý người dùng */}
         <li
           className={currentView === "users" ? "active" : ""}
           onClick={() => setView("users")}
@@ -43,7 +43,13 @@ const SidebarServer = ({ setView, currentView }) => {
           🚁 Quản lý Drone
         </li>
 
-       
+        {/* Thêm quản lý doanh thu */}
+        <li
+          className={currentView === "revenues" ? "active" : ""}
+          onClick={() => setView("revenues")}
+        >
+          💰 Quản lý doanh thu
+        </li>
       </ul>
     </div>
   );

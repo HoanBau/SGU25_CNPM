@@ -3,16 +3,16 @@ import React, { useState, useEffect } from "react";
 import "./Users.css";
 
 const USERS_KEY = "users_data";
-const LS_STORES = "app_stores"; // để lấy tên cửa hàng
+const LS_STORES = "app_stores";
 
-// Hàm lấy dữ liệu user từ localStorage
+// Lấy dữ liệu user từ localStorage
 const getUsersFromStorage = () => {
   const data = localStorage.getItem(USERS_KEY);
   return data
     ? JSON.parse(data)
     : [
         { id: 1, name: "Alice", email: "alice@example.com", role: "customer", status: "active" },
-        { id: 2, name: "Bob", email: "bob@example.com", role: "admin", storeId: 1 },
+        { id: 2, name: "Bob", email: "bob@example.com", role: "admin", status: "approved", storeId: 1 },
       ];
 };
 
@@ -36,7 +36,11 @@ const Users = () => {
   const addUser = () => {
     if (!newUser.name || !newUser.email) return;
     const id = users.length > 0 ? users[users.length - 1].id + 1 : 1;
-    setUsers([...users, { id, ...newUser }]);
+
+    // Nếu là nhà hàng (admin) mới đăng ký → trạng thái pending
+    const status = newUser.role === "admin" ? "pending" : newUser.status;
+
+    setUsers([...users, { id, ...newUser, status }]);
     setNewUser({ name: "", email: "", role: "customer", status: "active", storeId: null });
   };
 
@@ -52,9 +56,23 @@ const Users = () => {
     setEditingId(null);
   };
 
+  // Server duyệt hoặc từ chối nhà hàng đăng ký
+  const approveUser = (id) => {
+    setUsers(users.map(u => u.id === id ? { ...u, status: "approved" } : u));
+  };
+
+  const rejectUser = (id) => {
+    setUsers(users.map(u => u.id === id ? { ...u, status: "rejected" } : u));
+  };
+
+  // Server kích hoạt / khóa khách hàng
+  const toggleCustomerStatus = (id) => {
+    setUsers(users.map(u => u.id === id ? { ...u, status: u.status === "active" ? "inactive" : "active" } : u));
+  };
+
   return (
     <div className="users-container">
-      <h1>👤 Quản lý người dùng</h1>
+      <h1>👤 Quản lý người dùng (Server)</h1>
 
       {/* Form thêm user */}
       <div className="user-form">
@@ -75,7 +93,7 @@ const Users = () => {
           onChange={e => setNewUser({ ...newUser, role: e.target.value })}
         >
           <option value="customer">Khách hàng</option>
-          <option value="admin">Quản trị</option>
+          <option value="admin">Nhà hàng</option>
         </select>
 
         {newUser.role === "customer" ? (
@@ -95,6 +113,7 @@ const Users = () => {
             {stores.map(store => <option key={store.id} value={store.id}>{store.name}</option>)}
           </select>
         )}
+
         <button onClick={addUser}>Thêm người dùng</button>
       </div>
 
@@ -139,9 +158,9 @@ const Users = () => {
                     onChange={e => setEditingUser({ ...editingUser, role: e.target.value })}
                   >
                     <option value="customer">Khách hàng</option>
-                    <option value="admin">Quản trị</option>
+                    <option value="admin">Nhà hàng</option>
                   </select>
-                ) : (user.role === "admin" ? "Quản trị" : "Khách hàng")}
+                ) : (user.role === "admin" ? "Nhà hàng" : "Khách hàng")}
               </td>
               <td>
                 {editingId === user.id ? (
@@ -164,8 +183,8 @@ const Users = () => {
                   )
                 ) : (
                   user.role === "admin"
-                    ? stores.find(s => s.id === user.storeId)?.name || "-"
-                    : user.status === "active" ? "Đang hoạt động" : "Ngừng hoạt động"
+                    ? (user.status === "pending" ? "Đang chờ duyệt" : user.status === "rejected" ? "Bị từ chối" : stores.find(s => s.id === user.storeId)?.name || "-")
+                    : (user.status === "active" ? "Đang hoạt động" : "Ngừng hoạt động")
                 )}
               </td>
               <td>
@@ -175,6 +194,17 @@ const Users = () => {
                   <>
                     <button onClick={() => startEdit(user)}>Sửa</button>
                     <button onClick={() => deleteUser(user.id)}>Xóa</button>
+                    {user.role === "admin" && user.status === "pending" && (
+                      <>
+                        <button onClick={() => approveUser(user.id)}>✅ Duyệt</button>
+                        <button onClick={() => rejectUser(user.id)}>❌ Từ chối</button>
+                      </>
+                    )}
+                    {user.role === "customer" && (
+                      <button onClick={() => toggleCustomerStatus(user.id)}>
+                        {user.status === "active" ? "🔒 Khóa" : "🔓 Mở"}
+                      </button>
+                    )}
                   </>
                 )}
               </td>

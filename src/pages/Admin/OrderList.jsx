@@ -42,11 +42,14 @@ const OrderList = ({ orders, setOrders }) => {
 
     sorted.forEach((o) => {
       if (new Date(o.date).toLocaleDateString() === today) {
-        total += o.totalAmount;
+        total += o.totalAmount || 0;
         count++;
-        Object.entries(o.items).forEach(([foodId, qty]) => {
-          items[foodId] = (items[foodId] || 0) + qty;
-        });
+        if (o.items && typeof o.items === "object" && !Array.isArray(o.items)) {
+          Object.entries(o.items).forEach(([foodId, item]) => {
+            const qty = typeof item === "object" ? item.quantity || item.qty || 1 : item;
+            items[foodId] = (items[foodId] || 0) + qty;
+          });
+        }
       }
     });
 
@@ -85,6 +88,36 @@ const OrderList = ({ orders, setOrders }) => {
     setOrders(updatedOrders);
     setOrderSteps((prev) => ({ ...prev, [orderId]: stepIndex }));
     localStorage.setItem("orders", JSON.stringify(updatedOrders));
+
+    // 🛩 Nếu đơn chuyển sang "done" thì gửi qua DroneMap
+    if (newStatus === "done") {
+      const finishedOrder = updatedOrders.find((o) => o.id === orderId);
+      if (finishedOrder) {
+        const drones = JSON.parse(localStorage.getItem("drones_data")) || [];
+        const alreadyInList = drones.some((d) => d.id === finishedOrder.id);
+
+        if (!alreadyInList) {
+          // 📍 Giả lập vị trí khách hàng nếu chưa có
+          const newOrderForDrone = {
+            id: finishedOrder.id,
+            email: finishedOrder.email,
+            totalAmount: finishedOrder.totalAmount,
+            customerLocation:
+              finishedOrder.customerLocation || [
+                10.75 + Math.random() * 0.02,
+                106.65 + Math.random() * 0.02,
+              ],
+            status: "waiting", // chờ drone nhận
+          };
+
+          const updatedDroneList = [...drones, newOrderForDrone];
+          localStorage.setItem("drones_data", JSON.stringify(updatedDroneList));
+
+          console.log("🚀 Đã gửi đơn sang DroneMap:", newOrderForDrone);
+          alert(`🚁 Đơn #${finishedOrder.id} đã chuyển sang khu vực drone chờ giao hàng!`);
+        }
+      }
+    }
   };
 
   // 📋 Lọc đơn hàng theo trạng thái
@@ -107,8 +140,7 @@ const OrderList = ({ orders, setOrders }) => {
             <strong>{todaySummary.count}</strong> đơn hàng
           </p>
           <p>
-            💰{" "}
-            <strong>{todaySummary.total.toLocaleString("vi-VN")}</strong> ₫
+            💰 <strong>{todaySummary.total.toLocaleString("vi-VN")}</strong> ₫
           </p>
         </div>
         <div className="summary-card">
@@ -164,12 +196,11 @@ const OrderList = ({ orders, setOrders }) => {
                   <strong>👤 Người đặt:</strong> {o.email}
                 </p>
                 <p>
-                  <strong>📅 Ngày đặt:</strong>{" "}
-                  {new Date(o.date).toLocaleString()}
+                  <strong>📅 Ngày đặt:</strong> {new Date(o.date).toLocaleString()}
                 </p>
                 <p>
                   <strong>💰 Tổng tiền:</strong>{" "}
-                  {o.totalAmount.toLocaleString("vi-VN")} ₫
+                  {(o.totalAmount || 0).toLocaleString("vi-VN")} ₫
                 </p>
               </div>
               <div className="order-items">
@@ -177,11 +208,18 @@ const OrderList = ({ orders, setOrders }) => {
                   <strong>🍽️ Món ăn:</strong>
                 </p>
                 <ul>
-                  {Object.entries(o.items).map(([foodId, qty]) => {
+                  {Object.entries(o.items).map(([foodId, item]) => {
                     const foodInfo = food_list.find((f) => f._id === foodId);
+                    const qty = typeof item === "object" ? item.quantity || item.qty || 1 : item;
+                    const price =
+                      typeof item === "object"
+                        ? item.price || foodInfo?.price || 0
+                        : foodInfo?.price || 0;
+
                     return (
                       <li key={foodId}>
-                        {foodInfo?.name || foodId} — <span>{qty} phần</span>
+                        {foodInfo?.name || `Món #${foodId}`} — <span>{qty} phần</span> —{" "}
+                        <strong>{price.toLocaleString("vi-VN")} ₫</strong>
                       </li>
                     );
                   })}

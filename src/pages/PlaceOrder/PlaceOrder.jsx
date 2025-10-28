@@ -24,12 +24,18 @@ const PlaceOrder = ({ addOrder }) => {
     e.preventDefault();
     if (subtotal === 0) return;
 
+    // ✅ Chuẩn hóa items: đảm bảo là object { foodId: qty } và qty là number
+    const normalizedItems = {};
+    Object.entries(cartItems).forEach(([foodId, qty]) => {
+      normalizedItems[foodId] = Number(qty) || 0;
+    });
+
     // ✅ Tạo đơn hàng mới với status mặc định "Đã nhận"
     const newOrder = {
       id: Date.now(),
       email: orderEmail,
       status: "order", // ✅ mặc định "Đã nhận"
-      items: { ...cartItems },
+      items: normalizedItems,
       totalAmount: total,
       date: new Date().toISOString()
     };

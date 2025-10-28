@@ -1,0 +1,46 @@
+.revenues-server {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.revenues-server h1 {
+  margin-bottom: 20px;
+}
+
+.revenues-server section {
+  margin-top: 20px;
+}
+
+.revenues-server table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.revenues-server th,
+.revenues-server td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.revenues-server th {
+  background: #f4f4f4;
+}
+
+.revenues-server button {
+  margin: 2px;
+  padding: 5px 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+}
+
+.revenues-server button:hover {
+  opacity: 0.8;
+}
+
+.monthly-payout {
+  background: #007bff;
+  color: #fff;
+  margin-bottom: 10px;
+}

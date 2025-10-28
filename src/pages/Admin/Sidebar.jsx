@@ -1,7 +1,7 @@
 import React from "react";
 import "./Sidebar.css";
 
-// Sidebar có thêm mục "Quản lý món ăn"
+// Sidebar có thêm mục "Quản lý món ăn", "Cài đặt quán", "Rút tiền doanh thu"
 const Sidebar = ({ setView, currentView }) => {
   return (
     <div className="sidebar">
@@ -35,6 +35,22 @@ const Sidebar = ({ setView, currentView }) => {
           onClick={() => setView("drone")}
         >
           🚁 Drone
+        </li>
+
+        {/* ✅ Mục mới: Cài đặt quán */}
+        <li
+          className={currentView === "settings" ? "active" : ""}
+          onClick={() => setView("settings")}
+        >
+          ⚙️ Cài đặt quán
+        </li>
+
+        {/* ✅ Mục mới: Rút tiền doanh thu */}
+        <li
+          className={currentView === "earnings" ? "active" : ""}
+          onClick={() => setView("earnings")}
+        >
+          💳 Rút tiền doanh thu
         </li>
       </ul>
     </div>
