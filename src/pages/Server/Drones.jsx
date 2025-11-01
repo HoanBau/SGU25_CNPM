@@ -128,7 +128,7 @@ const DroneOrders = () => {
 
   return (
     <div className="drones-container">
-      <h1>🚁 Quản lý Drone + Orders (5 đơn)</h1>
+      <h1>🚁 Quản lý Drone</h1>
 
       <div className="drone-form">
         <input type="text" placeholder="Tên Drone mới" value={newDroneName} onChange={e=>setNewDroneName(e.target.value)} />

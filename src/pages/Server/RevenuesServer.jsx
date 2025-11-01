@@ -84,7 +84,7 @@ const RevenuesServer = () => {
 
   return (
     <div className="revenues-server">
-      <h1>💰 Quản lý doanh thu (Server)</h1>
+      <h1>💰 Quản lý doanh thu</h1>
 
       <button className="monthly-payout" onClick={processMonthlyPayout}>
         🗓️ Chuyển tiền định kỳ (hàng tháng)
