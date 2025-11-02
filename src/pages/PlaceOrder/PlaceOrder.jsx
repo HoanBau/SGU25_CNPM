@@ -5,7 +5,7 @@ import "./PlaceOrder.css";
 import { deliveryFee } from "../Cart/Cart";
 import { useNavigate } from "react-router-dom";
 import { Truck, Smartphone, CreditCard } from "lucide-react";
-
+import momoIcon from '../../assets/momo.png';
 const PlaceOrder = ({ addOrder }) => {
   const { getTotalCartAmount, setCartItems, cartItems, user, setUser, foodItems } =
     useContext(StoreContext);
@@ -246,7 +246,7 @@ const PlaceOrder = ({ addOrder }) => {
               <Smartphone size={22} />
               <div>
                 <b>MOMO</b>
-                <p>Thanh toán qua ví MOMO (hiện mã QR giả lập)</p>
+                <p>Thanh toán qua ví MOMO</p>
               </div>
             </label>
 
@@ -261,7 +261,7 @@ const PlaceOrder = ({ addOrder }) => {
               <CreditCard size={22} />
               <div>
                 <b>VNPAY</b>
-                <p>Thanh toán qua VNPAY (hiện mã QR giả lập)</p>
+                <p>Thanh toán qua VNPAY </p>
               </div>
             </label>
           </div>
@@ -328,30 +328,125 @@ const PlaceOrder = ({ addOrder }) => {
 
       {/* QR Modal for MOMO / VNPAY */}
       {showQRModal && (
-        <div className="popup-overlay">
-          <div className="popup qr-popup">
-            <h2>Thanh toán bằng {paymentMethod}</h2>
-            <p>Quét mã QR bên dưới bằng ứng dụng ví để thanh toán (giả lập)</p>
-            <div style={{ textAlign: "center", margin: "12px 0" }}>
-              <img src={qrUrl} alt="QR Payment" style={{ width: 300, height: 300 }} />
-            </div>
-            <p>
-              Số tiền: <b>{formatVND(total)}</b>
-            </p>
-            <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 12 }}>
-              <button onClick={handleSimulatePaymentSuccess}>Thanh toán xong (giả lập)</button>
-              <button
-                onClick={() => {
-                  setShowQRModal(false);
-                  setPendingOrder(null);
-                }}
-              >
-                Hủy
-              </button>
-            </div>
+  <div className="popup-overlay">
+    {/* MOMO Popup */}
+    {paymentMethod === "MOMO" && (
+      <div className="qr-momo-popup">
+        {/* LEFT INFO */}
+        <div className="momo-left">
+          <p className="momo-expire">Đơn hàng hết hạn sau <b>09:50</b></p>
+          <p><b>Nhà cung cấp:</b><br />Công ty TNHH Đình Thái Phong</p>
+          <p><b>Số tiền:</b> {formatVND(total)}</p>
+          <p><b>Thông tin:</b> {formData.name} [{formData.phone}]</p>
+          <p><b>Đơn hàng:</b> #{pendingOrder?.id}</p>
+
+          {/* Nút giả lập + hủy */}
+          <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <button
+              className="pay-btn"
+              onClick={handleSimulatePaymentSuccess}
+              style={{
+                background: '#fff',
+                color: '#a22d86',
+                padding: '10px',
+                border: 'none',
+                borderRadius: '6px',
+                fontWeight: 'bold',
+                cursor: 'pointer'
+              }}
+            >
+              ✅ Thanh toán xong 
+            </button>
+            <button
+              className="back-btn"
+              onClick={() => {
+                setShowQRModal(false);
+                setPendingOrder(null);
+              }}
+            >
+              ❌ Hủy
+            </button>
           </div>
         </div>
-      )}
+
+        {/* RIGHT QR */}
+        <div className="momo-right">
+          <img src="momoIcon" alt="MOMO Logo" className="momo-logo" />
+          <h3>Quét mã để thanh toán</h3>
+          <img src={qrUrl} alt="QR Payment" className="qr-image" />
+          <p>Sử dụng App MoMo hoặc ứng dụng Camera hỗ trợ QR code để quét mã</p>
+          <div className="momo-footer">
+            <span>Đang chờ bạn quét ...</span>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* VNPAY Popup */}
+    {paymentMethod === "VNPAY" && (
+  <div className="vnpay-vban-popup">
+    {/* Header */}
+    <div className="vnpay-header">
+      <img src="/icons/vban.png" alt="VBan" className="vban-logo" />
+      <div className="lang-flags">
+        <span className="flag-active">VN</span>
+        <span>EN</span>
+      </div>
+    </div>
+
+    <div className="vnpay-content">
+      {/* Cột trái: Quét QR */}
+      <div className="vnpay-left">
+        <h3>Thanh toán qua ứng dụng<br />Mobile Banking</h3>
+        <p className="subtitle">Quét mã VNPAY QR</p>
+        <div className="qr-wrapper">
+          <img src={qrUrl} alt="QR Code" className="qr-image" />
+        </div>
+        <p className="amount-label">Nạp tiền điện thoại</p>
+        <p className="amount">{formatVND(total)}</p>
+        <p className="guide">Hướng dẫn thanh toán?</p>
+      </div>
+
+      {/* Cột phải: VnMart Form */}
+      <div className="vnpay-right">
+        <h3>Thanh toán qua Ví điện tử VnMart</h3>
+        <div className="input-group">
+          <input type="text" placeholder="Số điện thoại" className="input-field" />
+          <img src="/icons/vnmart.png" alt="VnMart" className="vnmart-icon" />
+        </div>
+        <div className="input-group">
+          <input type="password" placeholder="Mật khẩu" className="input-field" />
+        </div>
+        <p className="terms">
+          Điều kiện sử dụng dịch vụ <span className="info-icon">i</span>
+        </p>
+
+        {/* NÚT GIẢ LẬP + HỦY */}
+        <div className="action-buttons">
+          <button
+            className="pay-btn-simulate"
+            onClick={handleSimulatePaymentSuccess}
+          >
+            Thanh toán xong 
+          </button>
+          <div className="or-divider">Hoặc</div>
+          <button
+            className="cancel-btn"
+            onClick={() => {
+              setShowQRModal(false);
+              setPendingOrder(null);
+            }}
+          >
+            HỦY
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+  </div>
+)}
+
     </div>
   );
 };

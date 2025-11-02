@@ -182,3 +182,243 @@
   border-radius: 6px;
   cursor: pointer;
 }
+
+/* Overlay chung */
+.popup-overlay {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* MOMO Popup */
+.qr-momo-popup {
+  display: flex;
+  width: 900px;
+  height: 500px;
+  max-width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.3);
+}
+
+/* LEFT */
+.momo-left {
+  flex: 1;
+  background: #a22d86; /* tím MOMO */
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.momo-left p { margin: 4px 0; }
+.momo-left .back-btn {
+  margin-top: auto;
+  padding: 8px 12px;
+  background: #fff;
+  color: #a22d86;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* RIGHT */
+.momo-right {
+  flex: 1.2;
+  background: #fff;
+  padding: 25px;
+  text-align: center;
+}
+.momo-right .momo-logo { width: 80px; margin-bottom: 12px; }
+.momo-right .qr-image {
+  width: 260px;
+  height: 260px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: 2px solid #eee;
+}
+.momo-footer { margin-top: 10px; font-size: 13px; color: #555; }
+
+/* VNPAY - VBan Style */
+.vnpay-vban-popup {
+  width: 800px;
+  max-width: 95%;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  overflow: hidden;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+/* Header */
+.vnpay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #eee;
+}
+.vban-logo {
+  height: 36px;
+}
+.lang-flags span {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #d71921;
+  cursor: pointer;
+}
+.flag-active {
+  font-weight: bold;
+  color: #0033a0 !important;
+}
+
+/* Content */
+.vnpay-content {
+  display: flex;
+  padding: 25px;
+  gap: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Left: QR */
+.vnpay-left {
+  text-align: center;
+  min-width: 260px;
+}
+.vnpay-left h3 {
+  font-size: 17px;
+  margin: 0 0 8px;
+  color: #333;
+  line-height: 1.4;
+}
+.subtitle {
+  font-size: 14px;
+  color: #d71921;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+.qr-wrapper {
+  background: #f0f0f0;
+  padding: 12px;
+  border-radius: 10px;
+  display: inline-block;
+  margin: 10px 0;
+}
+.qr-image {
+  width: 200px;
+  height: 200px;
+  border: 6px solid #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.amount-label {
+  font-size: 15px;
+  color: #333;
+  margin: 12px 0 4px;
+}
+.amount {
+  font-size: 24px;
+  font-weight: bold;
+  color: #d71921;
+  margin: 0;
+}
+.guide {
+  font-size: 13px;
+  color: #666;
+  margin-top: 15px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Right: VnMart Form */
+.vnpay-right {
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.vnpay-right h3 {
+  font-size: 16px;
+  margin: 0 0 10px;
+  color: #333;
+  text-align: center;
+}
+.input-group {
+  position: relative;
+}
+.input-field {
+  width: 100%;
+  padding: 12px 40px 12px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.vnmart-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 24px;
+}
+.terms {
+  font-size: 13px;
+  color: #666;
+  text-align: center;
+}
+.info-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: #ddd;
+  color: #666;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 11px;
+  line-height: 16px;
+  margin-left: 4px;
+  cursor: help;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+.pay-btn-simulate {
+  padding: 14px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+}
+.pay-btn-simulate:hover {
+  background: #0056b3;
+}
+.or-divider {
+  text-align: center;
+  font-size: 14px;
+  color: #999;
+  margin: 8px 0;
+}
+.cancel-btn {
+  padding: 12px;
+  background: #e9ecef;
+  color: #495057;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.cancel-btn:hover {
+  background: #ced4da;
+}
