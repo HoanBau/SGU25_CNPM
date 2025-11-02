@@ -1,16 +1,25 @@
 // src/api/paymentApi.js
 import axios from "axios";
 
-const BASE_URL = "http://localhost:5000/api"; // URL backend thật
+//const BASE_URL = "http://localhost:5000/api"; // backend thật
 const COMMISSION_RATE = 0.2;
+
+// ================== HÀM TIỆN ÍCH ==================
+const getLocal = (key, fallback = []) =>
+  JSON.parse(localStorage.getItem(key)) || fallback;
+const setLocal = (key, data) => localStorage.setItem(key, JSON.stringify(data));
 
 export const paymentApi = {
   // ================== ORDERS (Khách) ==================
   createOrder: async (order) => {
-    const orders = JSON.parse(localStorage.getItem("orders")) || [];
-    const newOrder = { ...order, id: Date.now(), status: "order", date: new Date().toISOString() };
-    orders.push(newOrder);
-    localStorage.setItem("orders", JSON.stringify(orders));
+    const orders = getLocal("orders");
+    const newOrder = {
+      ...order,
+      id: Date.now(),
+      status: "order",
+      date: new Date().toISOString(),
+    };
+    setLocal("orders", [...orders, newOrder]);
     return newOrder;
 
     // Backend thật:
@@ -18,8 +27,8 @@ export const paymentApi = {
     // return res.data;
   },
 
-  getOrders: async (email) => {
-    const orders = JSON.parse(localStorage.getItem("orders")) || [];
+  getOrders: async (email = null) => {
+    const orders = getLocal("orders");
     return email ? orders.filter((o) => o.email === email) : orders;
 
     // Backend thật:
@@ -28,9 +37,11 @@ export const paymentApi = {
   },
 
   updateOrderStatus: async (orderId, status) => {
-    const orders = JSON.parse(localStorage.getItem("orders")) || [];
-    const updated = orders.map((o) => (o.id === orderId ? { ...o, status } : o));
-    localStorage.setItem("orders", JSON.stringify(updated));
+    const orders = getLocal("orders");
+    const updated = orders.map((o) =>
+      o.id === orderId ? { ...o, status } : o
+    );
+    setLocal("orders", updated);
     return updated.find((o) => o.id === orderId);
 
     // Backend thật:
@@ -38,25 +49,37 @@ export const paymentApi = {
     // return res.data;
   },
 
-  // ================== STORES & REVENUE (Nhà hàng & Server) ==================
+  // ================== STORES (Nhà hàng) ==================
   getStores: async () => {
-    return JSON.parse(localStorage.getItem("stores")) || [
+    return getLocal("stores", [
       { id: 1, name: "Phở 24", revenue: 550000 },
       { id: 2, name: "Cơm Tấm 123", revenue: 340000 },
       { id: 3, name: "Bún Bò Huế O Loan", revenue: 720000 },
-    ];
+    ]);
 
     // Backend thật:
     // const res = await axios.get(`${BASE_URL}/stores`);
     // return res.data;
   },
 
+  updateStoreInfo: async (storeId, updateData) => {
+    const stores = getLocal("stores");
+    const updated = stores.map((s) =>
+      s.id === storeId ? { ...s, ...updateData } : s
+    );
+    setLocal("stores", updated);
+    return updated.find((s) => s.id === storeId);
+  },
+
+  // ================== RÚT TIỀN ==================
   requestWithdraw: async (storeId, amount = null, bankInfo = null) => {
     const stores = await paymentApi.getStores();
-    const withdrawRequests = JSON.parse(localStorage.getItem("withdrawRequests")) || [];
-
+    const withdrawRequests = getLocal("withdrawRequests");
     const store = stores.find((s) => s.id === storeId);
-    if (!store || (store.revenue === 0 && !amount)) throw new Error("Không có doanh thu để rút");
+
+    if (!store) throw new Error("Không tìm thấy quán");
+    if (store.revenue <= 0 && !amount)
+      throw new Error("Không có doanh thu để rút");
 
     const grossAmount = amount || store.revenue;
     const netAmount = Math.floor(grossAmount * (1 - COMMISSION_RATE));
@@ -72,7 +95,7 @@ export const paymentApi = {
       createdAt: new Date().toISOString(),
     };
 
-    localStorage.setItem("withdrawRequests", JSON.stringify([req, ...withdrawRequests]));
+    setLocal("withdrawRequests", [req, ...withdrawRequests]);
     return req;
 
     // Backend thật:
@@ -81,19 +104,24 @@ export const paymentApi = {
   },
 
   updateWithdrawStatus: async (id, status) => {
-    const withdrawRequests = JSON.parse(localStorage.getItem("withdrawRequests")) || [];
+    const withdrawRequests = getLocal("withdrawRequests");
+    const target = withdrawRequests.find((r) => r.id === id);
+    if (!target) throw new Error("Không tìm thấy yêu cầu rút tiền");
+
     const updated = withdrawRequests.map((r) =>
       r.id === id ? { ...r, status, updatedAt: new Date().toISOString() } : r
     );
-    localStorage.setItem("withdrawRequests", JSON.stringify(updated));
+    setLocal("withdrawRequests", updated);
 
+    // Nếu duyệt rút -> trừ doanh thu của quán
     if (status === "approved") {
       const stores = await paymentApi.getStores();
-      const req = withdrawRequests.find((r) => r.id === id);
       const updatedStores = stores.map((s) =>
-        s.id === req.storeId ? { ...s, revenue: s.revenue - req.grossAmount } : s
+        s.id === target.storeId
+          ? { ...s, revenue: Math.max(s.revenue - target.grossAmount, 0) }
+          : s
       );
-      localStorage.setItem("stores", JSON.stringify(updatedStores));
+      setLocal("stores", updatedStores);
     }
 
     return updated.find((r) => r.id === id);
@@ -104,17 +132,18 @@ export const paymentApi = {
   },
 
   getWithdrawHistory: async (storeId = null) => {
-    const allRequests = JSON.parse(localStorage.getItem("withdrawRequests")) || [];
-    return storeId ? allRequests.filter((r) => r.storeId === storeId) : allRequests;
+    const all = getLocal("withdrawRequests");
+    return storeId ? all.filter((r) => r.storeId === storeId) : all;
 
     // Backend thật:
     // const res = await axios.get(`${BASE_URL}/withdraws`, { params: { storeId } });
     // return res.data;
   },
 
+  // ================== THANH TOÁN CUỐI THÁNG (SERVER) ==================
   processMonthlyPayout: async () => {
     const stores = await paymentApi.getStores();
-    const withdrawRequests = JSON.parse(localStorage.getItem("withdrawRequests")) || [];
+    const withdrawRequests = getLocal("withdrawRequests");
 
     const newRequests = stores
       .filter((s) => s.revenue > 0)
@@ -129,8 +158,8 @@ export const paymentApi = {
         approvedAt: new Date().toISOString(),
       }));
 
-    localStorage.setItem("withdrawRequests", JSON.stringify([...newRequests, ...withdrawRequests]));
-    localStorage.setItem("stores", JSON.stringify(stores.map((s) => ({ ...s, revenue: 0 }))));
+    setLocal("withdrawRequests", [...newRequests, ...withdrawRequests]);
+    setLocal("stores", stores.map((s) => ({ ...s, revenue: 0 })));
 
     return newRequests;
 

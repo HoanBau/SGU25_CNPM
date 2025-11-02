@@ -1,3 +1,4 @@
+// src/pages/PlaceOrder/PlaceOrder.jsx
 import React, { useContext, useEffect, useState } from "react";
 import { StoreContext } from "../../context/StoreContext";
 import "./PlaceOrder.css";
@@ -12,6 +13,11 @@ const PlaceOrder = ({ addOrder }) => {
 
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [showPopup, setShowPopup] = useState(false);
+
+  // NEW: QR modal / pending order
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [qrUrl, setQrUrl] = useState("");
+  const [pendingOrder, setPendingOrder] = useState(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -59,6 +65,36 @@ const PlaceOrder = ({ addOrder }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // create simple QR image URL (uses qrserver.com)
+  const createQrForPayment = ({ method, amount, orderId, info }) => {
+    const payload = JSON.stringify({
+      method,
+      amount,
+      orderId,
+      name: info.name,
+      phone: info.phone,
+      note: info.note,
+    });
+    const data = encodeURIComponent(payload);
+    // size can be adjusted, here 300x300
+    return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${data}`;
+  };
+
+  const finalizeOrder = (order) => {
+    addOrder && addOrder(order);
+    setCartItems({});
+    localStorage.removeItem("discount");
+
+    const updatedUser = { ...(user || {}), ...formData };
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    setUser(updatedUser);
+
+    // show success popup
+    setShowQRModal(false);
+    setPendingOrder(null);
+    setShowPopup(true);
+  };
+
   const handleCheckout = (e) => {
     e.preventDefault();
     if (subtotal === 0) return;
@@ -74,14 +110,32 @@ const PlaceOrder = ({ addOrder }) => {
       info: formData,
     };
 
-    addOrder && addOrder(newOrder);
-    setCartItems({});
-    setShowPopup(true);
-    localStorage.removeItem("discount");
+    // If COD -> create order immediately
+    if (paymentMethod === "COD") {
+      finalizeOrder(newOrder);
+      return;
+    }
 
-    const updatedUser = { ...(user || {}), ...formData };
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    setUser(updatedUser);
+    // For MOMO / VNPAY -> open QR modal with generated qrUrl and keep order pending
+    const qr = createQrForPayment({
+      method: paymentMethod,
+      amount: total,
+      orderId: newOrder.id,
+      info: formData,
+    });
+    setQrUrl(qr);
+    setPendingOrder(newOrder);
+    setShowQRModal(true);
+  };
+
+  // Simulate user scanned & completed payment
+  const handleSimulatePaymentSuccess = () => {
+    if (!pendingOrder) return;
+    // mark as paid
+    const paidOrder = { ...pendingOrder, status: "paid", paidAt: new Date().toISOString() };
+    finalizeOrder(paidOrder);
+    // optionally navigate to orders or home
+    // navigate("/orders");
   };
 
   const closePopup = () => {
@@ -189,10 +243,10 @@ const PlaceOrder = ({ addOrder }) => {
                 checked={paymentMethod === "MOMO"}
                 onChange={(e) => setPaymentMethod(e.target.value)}
               />
-              <Smartphone size={22} color="#d82d8b" />
+              <Smartphone size={22} />
               <div>
                 <b>MOMO</b>
-                <p>Thanh toán qua ví MOMO</p>
+                <p>Thanh toán qua ví MOMO (hiện mã QR giả lập)</p>
               </div>
             </label>
 
@@ -204,10 +258,10 @@ const PlaceOrder = ({ addOrder }) => {
                 checked={paymentMethod === "VNPAY"}
                 onChange={(e) => setPaymentMethod(e.target.value)}
               />
-              <CreditCard size={22} color="#007bff" />
+              <CreditCard size={22} />
               <div>
                 <b>VNPAY</b>
-                <p>Thanh toán qua VNPAY</p>
+                <p>Thanh toán qua VNPAY (hiện mã QR giả lập)</p>
               </div>
             </label>
           </div>
@@ -261,12 +315,40 @@ const PlaceOrder = ({ addOrder }) => {
         </div>
       </form>
 
+      {/* Success popup for COD or after simulated payment */}
       {showPopup && (
         <div className="popup-overlay">
           <div className="popup">
             <h2>🎉 Đặt hàng thành công!</h2>
             <p>Cảm ơn bạn đã mua hàng tại FoodFast.</p>
             <button onClick={closePopup}>Đóng</button>
+          </div>
+        </div>
+      )}
+
+      {/* QR Modal for MOMO / VNPAY */}
+      {showQRModal && (
+        <div className="popup-overlay">
+          <div className="popup qr-popup">
+            <h2>Thanh toán bằng {paymentMethod}</h2>
+            <p>Quét mã QR bên dưới bằng ứng dụng ví để thanh toán (giả lập)</p>
+            <div style={{ textAlign: "center", margin: "12px 0" }}>
+              <img src={qrUrl} alt="QR Payment" style={{ width: 300, height: 300 }} />
+            </div>
+            <p>
+              Số tiền: <b>{formatVND(total)}</b>
+            </p>
+            <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 12 }}>
+              <button onClick={handleSimulatePaymentSuccess}>Thanh toán xong (giả lập)</button>
+              <button
+                onClick={() => {
+                  setShowQRModal(false);
+                  setPendingOrder(null);
+                }}
+              >
+                Hủy
+              </button>
+            </div>
           </div>
         </div>
       )}
