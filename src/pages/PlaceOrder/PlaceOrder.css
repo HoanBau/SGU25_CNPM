@@ -230,7 +230,7 @@
 .momo-right {
   flex: 1.2;
   background: #fff;
-  padding: 25px;
+  padding: 5px;
   text-align: center;
 }
 .momo-right .momo-logo { width: 80px; margin-bottom: 12px; }

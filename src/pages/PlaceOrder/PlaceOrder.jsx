@@ -6,6 +6,9 @@ import { deliveryFee } from "../Cart/Cart";
 import { useNavigate } from "react-router-dom";
 import { Truck, Smartphone, CreditCard } from "lucide-react";
 import momoIcon from '../../assets/momo.png';
+import vnpayIcon from '../../assets/vnpay.png';
+import vnmartIcon from '../../assets/vnmart.png';
+
 const PlaceOrder = ({ addOrder }) => {
   const { getTotalCartAmount, setCartItems, cartItems, user, setUser, foodItems } =
     useContext(StoreContext);
@@ -371,7 +374,7 @@ const PlaceOrder = ({ addOrder }) => {
 
         {/* RIGHT QR */}
         <div className="momo-right">
-          <img src="momoIcon" alt="MOMO Logo" className="momo-logo" />
+          <img src={momoIcon} alt="MOMO Logo" className="momo-logo" />
           <h3>Quét mã để thanh toán</h3>
           <img src={qrUrl} alt="QR Payment" className="qr-image" />
           <p>Sử dụng App MoMo hoặc ứng dụng Camera hỗ trợ QR code để quét mã</p>
@@ -387,7 +390,7 @@ const PlaceOrder = ({ addOrder }) => {
   <div className="vnpay-vban-popup">
     {/* Header */}
     <div className="vnpay-header">
-      <img src="/icons/vban.png" alt="VBan" className="vban-logo" />
+      <img src={vnpayIcon} alt="VBan" className="vban-logo" />
       <div className="lang-flags">
         <span className="flag-active">VN</span>
         <span>EN</span>
@@ -412,7 +415,7 @@ const PlaceOrder = ({ addOrder }) => {
         <h3>Thanh toán qua Ví điện tử VnMart</h3>
         <div className="input-group">
           <input type="text" placeholder="Số điện thoại" className="input-field" />
-          <img src="/icons/vnmart.png" alt="VnMart" className="vnmart-icon" />
+          <img src={vnmartIcon} alt="VnMart" className="vnmart-icon" />
         </div>
         <div className="input-group">
           <input type="password" placeholder="Mật khẩu" className="input-field" />
