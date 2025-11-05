@@ -214,23 +214,49 @@ const DroneOrders = () => {
       </table>
 
       <div className="map-wrapper" style={{ height: "400px", marginTop: "20px" }}>
-        <MapContainer center={[10.779, 106.702]} zoom={16} style={{ height: "100%", width: "100%" }}>
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {Object.entries(storeLocations).map(([k, v]) =>
-            <Marker key={`store-${k}`} position={v} icon={storeIcon} />
-          )}
-          {Object.entries(userLocations).map(([k, v]) =>
-            <Marker key={`user-${k}`} position={v} icon={userIcon} />
-          )}
-          {orders.filter(o => o.dronePos && Array.isArray(o.dronePos)).map(o =>
-            <Marker key={`drone-marker-${o.id}`} position={o.dronePos} icon={droneIcon}>
-              <Popup>{o.drone} giao cho {o.user}</Popup>
-            </Marker>
-          )}
-          {orders.filter(o => storeLocations[o.store] && userLocations[o.user]).map(o =>
-            <Polyline key={`path-${o.id}`} positions={[storeLocations[o.store], userLocations[o.user]]} color="blue" />
-          )}
-        </MapContainer>
+        <div className="map-wrapper" style={{ height: "400px", marginTop: "20px" }}>
+  <MapContainer center={[10.779, 106.702]} zoom={16} style={{ height: "100%", width: "100%" }}>
+    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+    {/* 🏬 Cửa hàng */}
+    {Object.entries(storeLocations).map(([k, v]) => (
+      <Marker key={`store-${k}`} position={v} icon={storeIcon} />
+    ))}
+
+    {/* 👤 Người dùng */}
+    {Object.entries(userLocations).map(([k, v]) => (
+      <Marker key={`user-${k}`} position={v} icon={userIcon} />
+    ))}
+
+    {/* 🚁 Drone đang bay */}
+    {orders
+      .filter((o) => o.dronePos && Array.isArray(o.dronePos))
+      .map((o) => (
+        <Marker key={`drone-marker-${o.id}`} position={o.dronePos} icon={droneIcon}>
+          <Popup>
+            {o.drone} giao cho {o.user}
+          </Popup>
+        </Marker>
+      ))}
+
+    {/* ✅ Chỉ hiển thị đường khi đơn đang giao */}
+    {orders
+      .filter(
+        (o) =>
+          o.status === "delivering" &&
+          storeLocations[o.store] &&
+          userLocations[o.user]
+      )
+      .map((o) => (
+        <Polyline
+          key={`path-${o.id}`}
+          positions={[storeLocations[o.store], userLocations[o.user]]}
+          color="blue"
+        />
+      ))}
+  </MapContainer>
+</div>
+
       </div>
     </div>
   );
