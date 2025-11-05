@@ -1,39 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./RevenuesServer.css";
 
 const COMMISSION_RATE = 0.2; // 20% phí dịch vụ
+const LS_STORES = "app_stores";
+const LS_WITHDRAW = "server_withdraws";
+
 const currency = (v) =>
   new Intl.NumberFormat("vi-VN").format(Math.floor(v || 0)) + " ₫";
 
-const sampleStores = [
-  { id: 1, name: "Phở 24", revenue: 550000 },
-  { id: 2, name: "Cơm Tấm 123", revenue: 340000 },
-  { id: 3, name: "Bún Bò Huế O Loan", revenue: 720000 },
-];
-
 const RevenuesServer = () => {
-  const [stores, setStores] = useState(sampleStores);
-  const [withdrawRequests, setWithdrawRequests] = useState([]);
+  const [stores, setStores] = useState(() => {
+    const saved = localStorage.getItem(LS_STORES);
+    return saved ? JSON.parse(saved) : [];
+  });
 
-  /** Tạo yêu cầu rút tiền */
+  const [withdrawRequests, setWithdrawRequests] = useState(() => {
+    const saved = localStorage.getItem(LS_WITHDRAW);
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem(LS_WITHDRAW, JSON.stringify(withdrawRequests));
+  }, [withdrawRequests]);
+
+  useEffect(() => {
+    const syncStores = () => {
+      const data = localStorage.getItem(LS_STORES);
+      if (data) setStores(JSON.parse(data));
+    };
+    window.addEventListener("storage", syncStores);
+    return () => window.removeEventListener("storage", syncStores);
+  }, []);
+
   const requestWithdraw = (storeId) => {
     const store = stores.find((s) => s.id === storeId);
-    if (!store || store.revenue === 0) return alert("Không có doanh thu để rút");
-    const netAmount = Math.floor(store.revenue * (1 - COMMISSION_RATE));
+    if (!store || store.revenue === 0)
+      return alert("Không có doanh thu để rút!");
+    const commission = Math.floor(store.revenue * COMMISSION_RATE);
+    const netAmount = Math.floor(store.revenue - commission);
     const req = {
-      id: `WD-${Date.now()}`,
+      id: `WD-${Date.now()}-${storeId}`,
       storeId,
       storeName: store.name,
       grossAmount: store.revenue,
+      commission,
       netAmount,
       status: "pending",
       createdAt: new Date().toISOString(),
     };
-    setWithdrawRequests([req, ...withdrawRequests]);
+    setWithdrawRequests((prev) => [req, ...prev]);
   };
 
-  /** Duyệt yêu cầu rút tiền */
   const approveWithdraw = (id) => {
+    const req = withdrawRequests.find((r) => r.id === id);
+    if (!req) return;
+
     setWithdrawRequests((prev) =>
       prev.map((r) =>
         r.id === id
@@ -41,15 +62,17 @@ const RevenuesServer = () => {
           : r
       )
     );
-    const req = withdrawRequests.find((r) => r.id === id);
-    setStores((prev) =>
-      prev.map((s) =>
-        s.id === req.storeId ? { ...s, revenue: s.revenue - req.grossAmount } : s
-      )
+
+    const updatedStores = stores.map((s) =>
+      s.id === req.storeId
+        ? { ...s, revenue: Math.max(0, s.revenue - req.grossAmount) }
+        : s
     );
+    setStores(updatedStores);
+    localStorage.setItem(LS_STORES, JSON.stringify(updatedStores));
+    window.dispatchEvent(new Event("storage"));
   };
 
-  /** Từ chối yêu cầu rút tiền */
   const rejectWithdraw = (id) => {
     setWithdrawRequests((prev) =>
       prev.map((r) =>
@@ -60,26 +83,34 @@ const RevenuesServer = () => {
     );
   };
 
-  /** Chuyển tiền định kỳ cho tất cả store active */
   const processMonthlyPayout = () => {
     const newRequests = stores
       .filter((s) => s.revenue > 0)
       .map((s) => {
-        const netAmount = Math.floor(s.revenue * (1 - COMMISSION_RATE));
+        const commission = Math.floor(s.revenue * COMMISSION_RATE);
+        const netAmount = s.revenue - commission;
         return {
           id: `WD-${Date.now()}-${s.id}`,
           storeId: s.id,
           storeName: s.name,
           grossAmount: s.revenue,
+          commission,
           netAmount,
           status: "approved",
           createdAt: new Date().toISOString(),
           approvedAt: new Date().toISOString(),
         };
       });
-    setWithdrawRequests([...newRequests, ...withdrawRequests]);
-    setStores((prev) => prev.map((s) => ({ ...s, revenue: 0 })));
-    alert("Đã chuyển tiền định kỳ cho tất cả nhà hàng.");
+
+    if (newRequests.length === 0)
+      return alert("Không có cửa hàng nào có doanh thu để chuyển.");
+
+    setWithdrawRequests((prev) => [...newRequests, ...prev]);
+    const updatedStores = stores.map((s) => ({ ...s, revenue: 0 }));
+    setStores(updatedStores);
+    localStorage.setItem(LS_STORES, JSON.stringify(updatedStores));
+    window.dispatchEvent(new Event("storage"));
+    alert("✅ Đã chuyển tiền định kỳ cho tất cả nhà hàng.");
   };
 
   return (
@@ -102,6 +133,13 @@ const RevenuesServer = () => {
             </tr>
           </thead>
           <tbody>
+            {stores.length === 0 && (
+              <tr>
+                <td colSpan={4} style={{ textAlign: "center" }}>
+                  Chưa có cửa hàng nào
+                </td>
+              </tr>
+            )}
             {stores.map((s) => (
               <tr key={s.id}>
                 <td>{s.id}</td>
@@ -125,8 +163,9 @@ const RevenuesServer = () => {
             <tr>
               <th>Mã yêu cầu</th>
               <th>Store</th>
-              <th>Doanh thu</th>
-              <th>Nhận về</th>
+              <th>Tổng doanh thu</th>
+              <th>Chiết khấu (20%)</th>
+              <th>Nhận về (sau chiết khấu)</th>
               <th>Trạng thái</th>
               <th>Thời gian tạo</th>
               <th>Hành động</th>
@@ -135,8 +174,8 @@ const RevenuesServer = () => {
           <tbody>
             {withdrawRequests.length === 0 && (
               <tr>
-                <td colSpan={7} style={{ textAlign: "center" }}>
-                  Chưa có yêu cầu
+                <td colSpan={8} style={{ textAlign: "center" }}>
+                  Chưa có yêu cầu nào
                 </td>
               </tr>
             )}
@@ -145,14 +184,23 @@ const RevenuesServer = () => {
                 <td>{r.id}</td>
                 <td>{r.storeName}</td>
                 <td>{currency(r.grossAmount)}</td>
-                <td>{currency(r.netAmount)}</td>
+                <td>{currency(r.commission)}</td>
+                <td>
+                  <strong style={{ color: "green" }}>
+                    {currency(r.netAmount)}
+                  </strong>
+                </td>
                 <td>{r.status}</td>
                 <td>{new Date(r.createdAt).toLocaleString()}</td>
                 <td>
                   {r.status === "pending" && (
                     <>
-                      <button onClick={() => approveWithdraw(r.id)}>✅ Duyệt</button>
-                      <button onClick={() => rejectWithdraw(r.id)}>❌ Từ chối</button>
+                      <button onClick={() => approveWithdraw(r.id)}>
+                        ✅ Duyệt
+                      </button>
+                      <button onClick={() => rejectWithdraw(r.id)}>
+                        ❌ Từ chối
+                      </button>
                     </>
                   )}
                   {r.status === "approved" && <span>💸 Đã chuyển</span>}

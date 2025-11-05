@@ -46,7 +46,7 @@ const Dashboard = ({ stores, drones, orders }) => {
 
   return (
     <div className="dashboard">
-      <h1>🚀 Grab Server Dashboard</h1>
+      <h1>🚀Server Dashboard</h1>
 
       {/* Thống kê nhanh */}
       <div className="dashboard-cards">

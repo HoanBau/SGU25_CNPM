@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Stores.css";
 
-/** ---------------------------
- * ⚙️ Cấu hình mô phỏng
- ---------------------------- */
 const COMMISSION_RATE = 0.2; // Grab thu 20%
-const currency = (v) => new Intl.NumberFormat("vi-VN").format(Math.floor(v || 0)) + " ₫";
-const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+const LS_STORES = "app_stores";
+const LS_ORDERS = "app_orders";
 
-/** ---------------------------
- * 🍜 Món ăn mẫu (GrabFood menu)
- ---------------------------- */
+const currency = (v) =>
+  new Intl.NumberFormat("vi-VN").format(Math.floor(v || 0)) + " ₫";
+const randomInt = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+
 const sampleItems = [
   { name: "Cơm gà", price: 65000 },
   { name: "Phở bò", price: 70000 },
@@ -19,9 +18,6 @@ const sampleItems = [
   { name: "Trà sữa", price: 45000 },
 ];
 
-/** ---------------------------
- * 📦 Hàm tạo đơn hàng giả lập
- ---------------------------- */
 const makeFakeOrder = (store) => {
   const itemCount = randomInt(1, 3);
   const items = [];
@@ -45,32 +41,60 @@ const makeFakeOrder = (store) => {
   };
 };
 
-/** ---------------------------
- * 🏪 COMPONENT CHÍNH
- ---------------------------- */
 const Stores = () => {
-  /** ====== STATE ====== */
-  const [stores, setStores] = useState([
-    // ban đầu có 3 active + 3 pending (như bạn yêu cầu)
-    { id: 1, name: "Phở 24", address: "Quận 1", phone: "0900000001", status: "active", note: "Đang nhận đơn", revenue: 550000 },
-    { id: 2, name: "Cơm Tấm 123", address: "Quận 3", phone: "0900000002", status: "active", note: "Nhận đơn buổi sáng", revenue: 340000 },
-    { id: 3, name: "Bún Bò Huế O Loan", address: "Quận 5", phone: "0900000003", status: "active", note: "Hoạt động tốt", revenue: 720000 },
-    { id: 4, name: "Bánh Mì Sài Gòn", address: "Quận 10", phone: "0900000004", status: "pending", note: "Đang chờ Grab kiểm duyệt", revenue: 0 },
-    { id: 5, name: "Cơm Niêu Nhà Lửa", address: "Quận 7", phone: "0900000005", status: "pending", note: "Đang chờ kiểm duyệt", revenue: 0 },
-    { id: 6, name: "Trà Sữa Mlem", address: "Bình Thạnh", phone: "0900000006", status: "pending", note: "Đang chờ duyệt hồ sơ", revenue: 0 },
-  ]);
+  /** =====================
+   * 🔁 LOAD DỮ LIỆU LƯU TRỮ
+   ====================== */
+  const [stores, setStores] = useState(() => {
+    const saved = localStorage.getItem(LS_STORES);
+    return saved
+      ? JSON.parse(saved)
+      : [
+          { id: 1, name: "Phở 24", address: "Quận 1", phone: "0900000001", status: "active", note: "Đang nhận đơn", revenue: 550000 },
+          { id: 2, name: "Cơm Tấm 123", address: "Quận 3", phone: "0900000002", status: "active", note: "Nhận đơn buổi sáng", revenue: 340000 },
+          { id: 3, name: "Bún Bò Huế O Loan", address: "Quận 5", phone: "0900000003", status: "active", note: "Hoạt động tốt", revenue: 720000 },
+          { id: 4, name: "Bánh Mì Sài Gòn", address: "Quận 10", phone: "0900000004", status: "pending", note: "Đang chờ Grab kiểm duyệt", revenue: 0 },
+          { id: 5, name: "Cơm Niêu Nhà Lửa", address: "Quận 7", phone: "0900000005", status: "pending", note: "Đang chờ kiểm duyệt", revenue: 0 },
+          { id: 6, name: "Trà Sữa Mlem", address: "Bình Thạnh", phone: "0900000006", status: "pending", note: "Đang chờ duyệt hồ sơ", revenue: 0 },
+        ];
+  });
 
-  const [newStore, setNewStore] = useState({ name: "", address: "", phone: "", documents: "" });
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState(() => {
+    const saved = localStorage.getItem(LS_ORDERS);
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [newStore, setNewStore] = useState({
+    name: "",
+    address: "",
+    phone: "",
+    documents: "",
+  });
+
   const [autoRunning, setAutoRunning] = useState(false);
   const autoRef = useRef(null);
 
-  /** ====== THỐNG KÊ ====== */
+  /** =====================
+   * 💾 LƯU TỰ ĐỘNG VÀO LOCALSTORAGE
+   ====================== */
+  useEffect(() => {
+    localStorage.setItem(LS_STORES, JSON.stringify(stores));
+  }, [stores]);
+
+  useEffect(() => {
+    localStorage.setItem(LS_ORDERS, JSON.stringify(orders));
+  }, [orders]);
+
+  /** =====================
+   * 📊 TÍNH TOÁN
+   ====================== */
   const totalRevenue = stores.reduce((s, t) => s + (t.revenue || 0), 0);
   const totalGrab = Math.floor(totalRevenue * COMMISSION_RATE);
   const totalRestaurant = totalRevenue - totalGrab;
 
-  /** ====== HÀNH ĐỘNG NHÀ HÀNG ====== */
+  /** =====================
+   * 🧩 HÀM XỬ LÝ
+   ====================== */
   const registerStore = () => {
     if (!newStore.name || !newStore.address || !newStore.phone || !newStore.documents)
       return alert("Vui lòng nhập đầy đủ thông tin và giấy tờ hợp lệ!");
@@ -96,13 +120,16 @@ const Stores = () => {
     setStores((prev) => prev.map((s) => (s.id === id ? { ...s, [field]: value } : s)));
   };
 
-  /** ====== HÀNH ĐỘNG GRAB (KIỂM DUYỆT RÕ 2 LỰA CHỌN) ====== */
-  // khi bấm "Kiểm duyệt" -> chuyển qua trạng thái verifying và hiển thị nút Accept/Reject
   const startReview = (id) => {
-    setStores((prev) => prev.map((s) => (s.id === id ? { ...s, status: "verifying", note: "Grab đang kiểm duyệt hồ sơ..." } : s)));
+    setStores((prev) =>
+      prev.map((s) =>
+        s.id === id
+          ? { ...s, status: "verifying", note: "Grab đang kiểm duyệt hồ sơ..." }
+          : s
+      )
+    );
   };
 
-  // Grab chấp nhận (approve)
   const acceptStore = (id) => {
     setStores((prev) =>
       prev.map((s) =>
@@ -113,7 +140,6 @@ const Stores = () => {
     );
   };
 
-  // Grab từ chối (reject)
   const rejectStore = (id) => {
     setStores((prev) =>
       prev.map((s) =>
@@ -124,26 +150,41 @@ const Stores = () => {
     );
   };
 
-  // Sau khi approved, admin Grab kích hoạt thành active để nhận đơn
   const activateStore = (id) => {
-    setStores((prev) => prev.map((s) => (s.id === id ? { ...s, status: "active", note: "Đã kích hoạt. Bắt đầu nhận đơn." } : s)));
+    setStores((prev) =>
+      prev.map((s) =>
+        s.id === id
+          ? { ...s, status: "active", note: "Đã kích hoạt. Bắt đầu nhận đơn." }
+          : s
+      )
+    );
   };
 
-  // Yêu cầu bổ sung giấy tờ -> trở lại pending
   const requestMoreDocs = (id) => {
-    setStores((prev) => prev.map((s) => (s.id === id ? { ...s, status: "pending", note: "Grab yêu cầu bổ sung giấy tờ." } : s)));
+    setStores((prev) =>
+      prev.map((s) =>
+        s.id === id
+          ? { ...s, status: "pending", note: "Grab yêu cầu bổ sung giấy tờ." }
+          : s
+      )
+    );
   };
 
-  /** ====== ĐƠN HÀNG ====== */
   const generateOrder = (id) => {
     const store = stores.find((s) => s.id === id);
     if (!store || store.status !== "active") return;
     const order = makeFakeOrder(store);
-    setStores((prev) => prev.map((s) => (s.id === id ? { ...s, revenue: (s.revenue || 0) + order.totalAmount } : s)));
+    setStores((prev) =>
+      prev.map((s) =>
+        s.id === id ? { ...s, revenue: (s.revenue || 0) + order.totalAmount } : s
+      )
+    );
     setOrders((prev) => [order, ...prev]);
   };
 
-  /** ====== MÔ PHỎNG TỰ ĐỘNG NHẬN ĐƠN ====== */
+  /** =====================
+   * 🤖 TỰ ĐỘNG SINH ĐƠN
+   ====================== */
   useEffect(() => {
     if (autoRunning) {
       autoRef.current = setInterval(() => {
@@ -152,25 +193,23 @@ const Stores = () => {
         const chosen = active[randomInt(0, active.length - 1)];
         generateOrder(chosen.id);
       }, 3000 + randomInt(0, 3000));
-    } else {
-      if (autoRef.current) {
-        clearInterval(autoRef.current);
-        autoRef.current = null;
-      }
+    } else if (autoRef.current) {
+      clearInterval(autoRef.current);
+      autoRef.current = null;
     }
     return () => {
-      if (autoRef.current) {
-        clearInterval(autoRef.current);
-        autoRef.current = null;
-      }
+      if (autoRef.current) clearInterval(autoRef.current);
     };
   }, [autoRunning, stores]);
 
-  /** ====== UI ====== */
+  /** =====================
+   * 🎨 GIAO DIỆN
+   ====================== */
   return (
     <div className="stores-grab stores">
       <h1>🚀 Quản lý Merchant & Đơn hàng</h1>
 
+      {/* --- FORM ĐĂNG KÝ --- */}
       <section className="panel">
         <h2>📝 Đăng ký nhà hàng (Merchant submits)</h2>
         <div className="form-inline">
@@ -182,11 +221,12 @@ const Stores = () => {
         </div>
       </section>
 
+      {/* --- THỐNG KÊ --- */}
       <section className="panel">
         <h2>📊 Thống kê tổng quan </h2>
         <div className="stats-row">
           <div className="stat"><div className="stat-title">Tổng cửa hàng</div><div className="stat-value">{stores.length}</div></div>
-          <div className="stat"><div className="stat-title">Tổng doanh thu (món)</div><div className="stat-value">{currency(totalRevenue)}</div></div>
+          <div className="stat"><div className="stat-title">Tổng doanh thu</div><div className="stat-value">{currency(totalRevenue)}</div></div>
           <div className="stat"><div className="stat-title">Grab thu ({COMMISSION_RATE * 100}%)</div><div className="stat-value">{currency(totalGrab)}</div></div>
           <div className="stat"><div className="stat-title">Nhà hàng nhận</div><div className="stat-value">{currency(totalRestaurant)}</div></div>
           <div className="stat">
@@ -196,6 +236,7 @@ const Stores = () => {
         </div>
       </section>
 
+      {/* --- DANH SÁCH CỬA HÀNG --- */}
       <section className="panel">
         <h2>🏬 Danh sách cửa hàng </h2>
         <table className="stores-table">
@@ -208,7 +249,7 @@ const Stores = () => {
               <th>Ghi chú</th>
               <th>Trạng thái</th>
               <th>Doanh thu</th>
-              <th>Hành động (Grab)</th>
+              <th>Hành động</th>
             </tr>
           </thead>
           <tbody>
@@ -221,47 +262,28 @@ const Stores = () => {
                   <td><input value={s.name} onChange={(e) => startEditStore(s.id, "name", e.target.value)} /></td>
                   <td><input value={s.address} onChange={(e) => startEditStore(s.id, "address", e.target.value)} /></td>
                   <td><input value={s.phone} onChange={(e) => startEditStore(s.id, "phone", e.target.value)} /></td>
-                  <td style={{ textAlign: "left", maxWidth: 240 }}>{s.note || "-"}</td>
-                  <td>
-                    {s.status === "pending" && <span>📤 pending</span>}
-                    {s.status === "verifying" && <span>🔍 verifying</span>}
-                    {s.status === "approved" && <span>✅ approved</span>}
-                    {s.status === "active" && <span>🟢 active</span>}
-                    {s.status === "rejected" && <span>❌ rejected</span>}
-                  </td>
+                  <td>{s.note || "-"}</td>
+                  <td>{s.status}</td>
                   <td>
                     <div>{currency(s.revenue)}</div>
                     <div style={{ fontSize: 12, color: "#666" }}>Store: {currency(storeShare)}</div>
                     <div style={{ fontSize: 12, color: "#666" }}>Grab: {currency(grabShare)}</div>
                   </td>
                   <td>
-                    {s.status === "pending" && (
-                      <>
-                        <button onClick={() => startReview(s.id)}>👀 Kiểm duyệt</button>
-                      </>
-                    )}
-
+                    {s.status === "pending" && <button onClick={() => startReview(s.id)}>👀 Kiểm duyệt</button>}
                     {s.status === "verifying" && (
                       <>
-                        <button onClick={() => acceptStore(s.id)} style={{ background: "#28a745", color: "#fff" }}>✅ Chấp nhận</button>
-                        <button onClick={() => rejectStore(s.id)} style={{ background: "#dc3545", color: "#fff" }}>❌ Từ chối</button>
-                        <button onClick={() => requestMoreDocs(s.id)} style={{ background: "#f0ad4e", color: "#fff" }}>📑 Yêu cầu bổ sung</button>
+                        <button onClick={() => acceptStore(s.id)}>✅ Chấp nhận</button>
+                        <button onClick={() => rejectStore(s.id)}>❌ Từ chối</button>
+                        <button onClick={() => requestMoreDocs(s.id)}>📎 Bổ sung giấy tờ</button>
                       </>
                     )}
-
                     {s.status === "approved" && (
-                      <>
-                        <button onClick={() => activateStore(s.id)}>🚀 Kích hoạt</button>
-                        <button onClick={() => requestMoreDocs(s.id)}>📑 Yêu cầu bổ sung</button>
-                      </>
+                      <button onClick={() => activateStore(s.id)}>🚀 Kích hoạt</button>
                     )}
-
                     {s.status === "active" && (
-                      <>
-                        <button onClick={() => generateOrder(s.id)}>➕ Sinh đơn</button>
-                      </>
+                      <button onClick={() => generateOrder(s.id)}>➕ Sinh đơn</button>
                     )}
-
                     <button onClick={() => deleteStore(s.id)} style={{ background: "#ff6b6b", color: "#fff", marginLeft: 6 }}>🗑️</button>
                   </td>
                 </tr>
@@ -271,11 +293,18 @@ const Stores = () => {
         </table>
       </section>
 
+      {/* --- ĐƠN HÀNG --- */}
       <section className="panel">
         <h2>🧾 Danh sách đơn hàng </h2>
         <div style={{ marginBottom: 8 }}>
           <span style={{ color: "#666", fontSize: 13, marginRight: 12 }}>Tổng đơn: {orders.length}</span>
-          <button onClick={() => { if (window.confirm("Xóa tất cả đơn hàng?")) setOrders([]); }}>Xóa tất cả đơn</button>
+          <button
+            onClick={() => {
+              if (window.confirm("Xóa tất cả đơn hàng?")) setOrders([]);
+            }}
+          >
+            Xóa tất cả đơn
+          </button>
         </div>
         <table className="orders-table">
           <thead>
@@ -283,14 +312,16 @@ const Stores = () => {
               <th>Mã đơn</th>
               <th>Store</th>
               <th>Tổng món</th>
-              <th>Phí giao (khách trả)</th>
-              <th>Created</th>
+              <th>Phí giao</th>
+              <th>Thời gian</th>
               <th>Hành động</th>
             </tr>
           </thead>
           <tbody>
             {orders.length === 0 && (
-              <tr><td colSpan={6}>Chưa có đơn hàng</td></tr>
+              <tr>
+                <td colSpan={6}>Chưa có đơn hàng</td>
+              </tr>
             )}
             {orders.map((o) => (
               <tr key={o.id}>
@@ -299,7 +330,16 @@ const Stores = () => {
                 <td>{currency(o.totalAmount)}</td>
                 <td>{currency(o.shipping)}</td>
                 <td>{new Date(o.createdAt).toLocaleString()}</td>
-                <td><button onClick={() => { if (window.confirm("Xóa đơn này?")) setOrders((prev) => prev.filter(x => x.id !== o.id)); }}>Xóa</button></td>
+                <td>
+                  <button
+                    onClick={() => {
+                      if (window.confirm("Xóa đơn này?"))
+                        setOrders((prev) => prev.filter((x) => x.id !== o.id));
+                    }}
+                  >
+                    Xóa
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
