@@ -270,12 +270,29 @@ const DroneMap = () => {
         <button onClick={handleSearchAddress} disabled={isBusy || !address}>Tìm</button>
       </div>
 
-      <p>
-        <b>Trạng thái:</b> {status}
-        <br />
-        <b>Tiến độ:</b> {Math.round(progress * 100)}%
-        {selectedOrder && <><br /><b>Đơn đang xử lý:</b> #{selectedOrder.id}</>}
-      </p>
+<p>
+  <b>Trạng thái:</b> {status}
+  <br />
+  {direction === "toCustomer" && deliveryPos ? (
+    <>
+      <b>⏱️ Thời gian còn lại:</b>{" "}
+      {calcETA(calcDistanceKm(dronePos, deliveryPos))}
+      <br />
+      <b>📏 Khoảng cách còn lại:</b>{" "}
+      {calcDistanceKm(dronePos, deliveryPos).toFixed(2)} km
+    </>
+  ) : (
+    <>
+      <b>Tiến độ:</b> {Math.round(progress * 100)}%
+    </>
+  )}
+  {selectedOrder && (
+    <>
+      <br />
+      <b>Đơn đang xử lý:</b> #{selectedOrder.id}
+    </>
+  )}
+</p>
 
       <button
         className="start-button"

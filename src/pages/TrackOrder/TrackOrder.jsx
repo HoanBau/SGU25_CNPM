@@ -123,6 +123,26 @@ const TrackOrder = () => {
     }
   };
 
+  // ⚙️ Hàm tính khoảng cách (km)
+  const calcDistanceKm = (pos1, pos2) => {
+    if (!pos1 || !pos2) return 0;
+    const R = 6371;
+    const dLat = ((pos2[0] - pos1[0]) * Math.PI) / 180;
+    const dLon = ((pos2[1] - pos1[1]) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((pos1[0] * Math.PI) / 180) *
+        Math.cos((pos2[0] * Math.PI) / 180) *
+        Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  };
+
+  // ⚙️ Ước tính thời gian giao hàng (phút)
+  const calcETA = (distanceKm, speedKmH = 40) => {
+    const minutes = Math.max(1, Math.round((distanceKm / speedKmH) * 60));
+    return `${minutes} phút`;
+  };
+
   return (
     <div className="trackorder-container">
       <h2>Theo dõi đơn hàng</h2>
@@ -172,13 +192,25 @@ const TrackOrder = () => {
             )}
           </MapContainer>
 
-          {/* Trạng thái đơn hàng */}
+          {/* 🧭 Trạng thái đơn hàng */}
           <div className="status-box" style={{ background: getStatusColor() }}>
             <p>{getStatusText()}</p>
+
             {status === "delivering" && (
-              <div className="progress-bar">
-                <div className="progress" style={{ width: `${progress}%` }}></div>
-              </div>
+              <>
+                <div className="progress-bar">
+                  <div className="progress" style={{ width: `${progress}%` }}></div>
+                </div>
+
+                {/* 📏 Khoảng cách và thời gian còn lại */}
+                {customerPos && (
+                  <p style={{ marginTop: "6px", fontWeight: "bold" }}>
+                    📏 Còn lại: {calcDistanceKm(dronePos, customerPos).toFixed(2)} km<br />
+                    ⏱️ Ước tính giao đến:{" "}
+                    {calcETA(calcDistanceKm(dronePos, customerPos))}
+                  </p>
+                )}
+              </>
             )}
           </div>
         </div>
