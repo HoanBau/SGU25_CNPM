@@ -6,23 +6,38 @@ import "./Drones.css";
 
 const DRONES_KEY = "drones_data";
 const ORDERS_KEY = "orders_data";
-const STORES_KEY = "app_stores"; // 💡 Lấy dữ liệu từ localStorage
+const STORES_KEY = "app_stores";
 
+// Dữ liệu mặc định
 const defaultDrones = [
-  { id: 1, name: "Drone 1", status: "ready", eta: null },
-  { id: 2, name: "Drone 2", status: "ready", eta: null },
-  { id: 3, name: "Drone 3", status: "ready", eta: null },
+  { id: 1, name: "Drone 1", status: "ready", eta: null, battery: 100, deliveriesLeft: 5 },
+  { id: 2, name: "Drone 2", status: "ready", eta: null, battery: 100, deliveriesLeft: 5 },
+  { id: 3, name: "Drone 3", status: "ready", eta: null, battery: 100, deliveriesLeft: 5 },
 ];
 
 const defaultOrders = [
-  { id: 101, store: "Pizza House", user: "Alice", status: "pending", drone: "", dronePos: null },
-  { id: 102, store: "Sushi King", user: "Bob", status: "pending", drone: "", dronePos: null },
-  { id: 103, store: "Burger Zone", user: "Charlie", status: "pending", drone: "", dronePos: null },
-  { id: 104, store: "Pizza House", user: "Dave", status: "pending", drone: "", dronePos: null },
- // { id: 105, store: "Sushi King", user: "Eve", status: "pending", drone: "", dronePos: null },
+  { id: 101, store: "Pizza House", user: "Alice", status: "pending", drone: "", dronePos: null, distance: null },
+  { id: 102, store: "Sushi King", user: "Bob", status: "pending", drone: "", dronePos: null, distance: null },
+  { id: 103, store: "Burger Zone", user: "Charlie", status: "pending", drone: "", dronePos: null, distance: null },
+  { id: 104, store: "Pizza House", user: "Dave", status: "pending", drone: "", dronePos: null, distance: null },
 ];
 
-// ====== ⚙️ Load vị trí từ localStorage (nếu có store thật) ======
+// Tính khoảng cách theo lat/lng (km)
+const calcDistance = (a, b) => {
+  if (!a || !b) return 0;
+  const R = 6371;
+  const dLat = ((b[0] - a[0]) * Math.PI) / 180;
+  const dLon = ((b[1] - a[1]) * Math.PI) / 180;
+  const lat1 = (a[0] * Math.PI) / 180;
+  const lat2 = (b[0] * Math.PI) / 180;
+  const aVal =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(aVal), Math.sqrt(1 - aVal));
+  return R * c;
+};
+
+// Load vị trí cửa hàng
 const loadStoreLocations = () => {
   const stored = JSON.parse(localStorage.getItem(STORES_KEY)) || [];
   if (stored.length === 0) {
@@ -34,14 +49,10 @@ const loadStoreLocations = () => {
   }
   const locs = {};
   stored.forEach((s, i) => {
-    if (s.location && Array.isArray(s.location)) {
-      locs[s.name || `Store ${i + 1}`] = s.location;
-    } else {
-      locs[s.name || `Store ${i + 1}`] = [
-        10.77 + Math.random() * 0.02,
-        106.69 + Math.random() * 0.02,
-      ];
-    }
+    locs[s.name || `Store ${i + 1}`] =
+      s.location && Array.isArray(s.location)
+        ? s.location
+        : [10.77 + Math.random() * 0.02, 106.69 + Math.random() * 0.02];
   });
   return locs;
 };
@@ -52,7 +63,6 @@ const userLocations = {
   Bob: [10.7810, 106.7040],
   Charlie: [10.7770, 106.7060],
   Dave: [10.7820, 106.7030],
-  Eve: [10.7795, 106.7070],
 };
 
 const droneIcon = L.icon({ iconUrl: "https://cdn-icons-png.flaticon.com/512/414/414927.png", iconSize: [40, 40] });
@@ -88,7 +98,7 @@ const DroneOrders = () => {
 
   const addDrone = () => {
     if (!newDroneName) return;
-    setDrones([...drones, { id: Date.now(), name: newDroneName, status: "ready", eta: null }]);
+    setDrones([...drones, { id: Date.now(), name: newDroneName, status: "ready", eta: null, battery: 100, deliveriesLeft: 5 }]);
     setNewDroneName("");
   };
 
@@ -96,52 +106,137 @@ const DroneOrders = () => {
     setDrones(drones.map((drone, i) => i === index ? { ...drone, status: newStatus } : drone));
   };
 
-  const startDelivery = (droneIndex, orderId) => {
-    const drone = drones[droneIndex];
-    if (drone.status !== "ready") return alert("🚨 Drone không thể giao!");
+const startDelivery = (droneIndex, orderId) => {
+  const drone = drones[droneIndex];
+  if (drone.status !== "ready") return alert("🚨 Drone không thể giao!");
+  if (drone.deliveriesLeft <= 0 || drone.battery <= 0)
+    return alert("⚠️ Drone đã hết pin hoặc hết lượt bay!");
 
-    const order = orders.find(o => o.id === orderId);
-    const start = storeLocations[order.store];
-    const end = userLocations[order.user];
-    if (!start || !end) return alert("⚠️ Thiếu tọa độ để mô phỏng!");
+  const order = orders.find((o) => o.id === orderId);
+  const start = storeLocations[order.store];
+  const end = userLocations[order.user];
+  if (!start || !end) return alert("⚠️ Thiếu tọa độ!");
 
-    const steps = 100;
-    let step = 0;
+  const oneWayDist = calcDistance(start, end);
+  const totalDist = oneWayDist * 2; // 👉 Tổng quãng đường cả đi và về
+  const steps = 100;
+  let step = 0;
+  let going = true;
 
-    setDrones(drones.map((d, i) => i === droneIndex ? { ...d, status: "delivering", eta: 5 } : d));
-    setOrders(orders.map(o => o.id === orderId ? { ...o, status: "delivering", drone: drone.name, dronePos: start } : o));
+  // ✅ Cập nhật trạng thái ban đầu
+  setDrones((prev) =>
+    prev.map((d, i) =>
+      i === droneIndex ? { ...d, status: "delivering", eta: 5 } : d
+    )
+  );
 
-    const interval = setInterval(() => {
-      step++;
-      const lat = start[0] + ((end[0] - start[0]) * step / steps);
-      const lng = start[1] + ((end[1] - start[1]) * step / steps);
-      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, dronePos: [lat, lng] } : o));
-      setDrones(prev => prev.map((d, i) => i === droneIndex ? { ...d, eta: Math.max(0, ((steps - step) / 20).toFixed(1)) } : d));
-
-      if (step >= steps) {
-        clearInterval(interval);
-        let backStep = 0;
-        const backInterval = setInterval(() => {
-          backStep++;
-          const latBack = end[0] + ((start[0] - end[0]) * backStep / steps);
-          const lngBack = end[1] + ((start[1] - end[1]) * backStep / steps);
-          setOrders(prev => prev.map(o => o.id === orderId ? { ...o, dronePos: [latBack, lngBack] } : o));
-          if (backStep >= steps) {
-            clearInterval(backInterval);
-            setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: "done", dronePos: null } : o));
-            setDrones(prev => prev.map((d, i) => i === droneIndex ? { ...d, status: "ready", eta: null } : d));
+  setOrders((prev) =>
+    prev.map((o) =>
+      o.id === orderId
+        ? {
+            ...o,
+            status: "delivering",
+            drone: drone.name,
+            dronePos: start,
+            // ✅ Hiển thị tổng khoảng cách ngay từ đầu
+            distance: `${totalDist.toFixed(2)} (km, cả đi & về)`,
+            totalDistance: totalDist, // để lưu cho nội bộ
           }
-        }, 50);
-      }
-    }, 50);
-  };
+        : o
+    )
+  );
 
-  const restartOrders = () => {
-    const doneOrders = orders.filter(o => o.status === "done");
-    if (doneOrders.length === 0) return alert("Không có đơn nào đã giao để restart!");
-    setOrders(prev => prev.map(o => o.status === "done" ? { ...o, status: "pending", drone: "", dronePos: null } : o));
-    setDrones(prev => prev.map(d => ({ ...d, status: "ready", eta: null })));
-  };
+  // ✅ Bắt đầu bay
+  const interval = setInterval(() => {
+    if (going) {
+      step++;
+      const lat = start[0] + ((end[0] - start[0]) * step) / steps;
+      const lng = start[1] + ((end[1] - start[1]) * step) / steps;
+      const remaining = calcDistance([lat, lng], end);
+
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.id === orderId
+            ? { ...o, dronePos: [lat, lng], distance: `${remaining.toFixed(2)} km` }
+            : o
+        )
+      );
+
+      if (step >= steps) going = false;
+    } else {
+      step--;
+      const lat = end[0] + ((start[0] - end[0]) * (steps - step)) / steps;
+      const lng = end[1] + ((start[1] - end[1]) * (steps - step)) / steps;
+      const remaining = calcDistance([lat, lng], start);
+
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.id === orderId
+            ? { ...o, dronePos: [lat, lng], distance: `${remaining.toFixed(2)} km` }
+            : o
+        )
+      );
+
+      if (step <= 0) {
+        clearInterval(interval);
+
+        // ✅ Cập nhật khi hoàn tất
+        setOrders((prev) =>
+          prev.map((o) =>
+            o.id === orderId
+              ? {
+                  ...o,
+                  status: "done",
+                  dronePos: start,
+                  distance: `${totalDist.toFixed(2)} (km, cả đi & về)`,
+                }
+              : o
+          )
+        );
+
+        setDrones((prev) =>
+          prev.map((d, i) =>
+            i === droneIndex
+              ? {
+                  ...d,
+                  status: "ready",
+                  eta: null,
+                  battery: Math.max(0, d.battery - oneWayDist * 10 * 2), // bay 2 chiều hao pin gấp đôi
+                  deliveriesLeft: Math.max(0, d.deliveriesLeft - 1),
+                }
+              : d
+          )
+        );
+      }
+    }
+  }, 80);
+};
+
+
+const restartOrders = () => {
+  // Reset đơn về trạng thái pending, xóa drone, reset distance
+  setOrders(prev => 
+    prev.map(o => ({
+      ...o,
+      status: "pending",
+      drone: "",
+      dronePos: null,
+      distance: null, // ✅ reset khoảng cách
+      totalDistance: null, // ✅ nếu lưu nội bộ
+    }))
+  );
+
+  // Reset drone về trạng thái ready, ETA null
+  setDrones(prev => 
+    prev.map(d => ({
+      ...d,
+      status: "ready",
+      eta: null,
+      // giữ pin & lượt giao còn nguyên để demo tiếp
+    }))
+  );
+};
+
 
   const deleteDrone = (index) => {
     if (drones[index].status === "delivering") return alert("🚨 Không thể xóa drone đang giao!");
@@ -155,26 +250,29 @@ const DroneOrders = () => {
       <div className="drone-form">
         <input type="text" placeholder="Tên Drone mới" value={newDroneName} onChange={e => setNewDroneName(e.target.value)} />
         <button onClick={addDrone}>Thêm Drone</button>
-        <button onClick={restartOrders} style={{ marginLeft: "10px" }}>🔄 Restart đơn đã giao</button>
+        <button onClick={restartOrders} style={{ marginLeft: "10px" }}>🔄 Restart đơn</button>
       </div>
 
       <table className="drones-table">
         <thead>
-          <tr><th>#</th><th>Tên Drone</th><th>Trạng thái</th><th>ETA</th><th>Hành động</th></tr>
+          <tr><th>#</th><th>Tên Drone</th><th>Trạng thái</th><th>Pin</th><th>Lượt giao còn</th><th>ETA</th><th>Hành động</th></tr>
         </thead>
         <tbody>
           {drones.map((drone, index) => (
-            <tr key={`drone-${drone.id}`}>
+            <tr key={drone.id}>
               <td>{index + 1}</td>
               <td>{drone.name}</td>
               <td>{translateDroneStatus(drone.status)}</td>
+              <td>{(drone.battery ?? 0).toFixed(0)}%</td>
+
+              <td>{drone.deliveriesLeft}</td>
               <td>{drone.eta ? `${drone.eta}s` : "-"}</td>
               <td>
                 {orders.filter(o => o.status === "pending").length > 0 && (
                   <select onChange={e => startDelivery(index, Number(e.target.value))} defaultValue="" disabled={drone.status !== "ready"}>
                     <option value="">🚀 Giao đơn</option>
                     {orders.filter(o => o.status === "pending").map(o =>
-                      <option key={`order-opt-${o.id}`} value={o.id}>#{o.id} {o.user}</option>
+                      <option key={o.id} value={o.id}>#{o.id} {o.user}</option>
                     )}
                   </select>
                 )}
@@ -184,79 +282,60 @@ const DroneOrders = () => {
                   <option value="maintenance">Bảo trì</option>
                   <option value="low_battery">Pin yếu</option>
                 </select>
-                <button onClick={() => deleteDrone(index)}>❌ Xóa</button>
+                <button onClick={() => deleteDrone(index)}>❌</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <h2>📦 Danh sách đơn hàng</h2>
+      <h2>📦 Đơn hàng</h2>
       <table className="drones-table">
-        <thead>
-          <tr><th>ID</th><th>Cửa hàng</th><th>Khách hàng</th><th>Trạng thái</th><th>Drone</th><th>ETA</th></tr>
-        </thead>
+        <thead><tr><th>ID</th><th>Cửa hàng</th><th>Khách hàng</th><th>Trạng thái</th><th>Drone</th><th>Khoảng cách (km)</th></tr></thead>
         <tbody>
-          {orders.map(order => {
-            const drone = drones.find(d => d.name === order.drone);
-            return (
-              <tr key={`order-${order.id}`}>
-                <td>{order.id}</td>
-                <td>{order.store}</td>
-                <td>{order.user}</td>
-                <td>{translateOrderStatus(order.status)}</td>
-                <td>{order.drone || "-"}</td>
-                <td>{order.status === "delivering" && drone ? `${drone.eta}s` : "-"}</td>
-              </tr>
-            );
-          })}
+          {orders.map(order => (
+            <tr key={order.id}>
+              <td>{order.id}</td>
+              <td>{order.store}</td>
+              <td>{order.user}</td>
+              <td>{translateOrderStatus(order.status)}</td>
+              <td>{order.drone || "-"}</td>
+              <td>{order.distance || "-"}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
 
       <div className="map-wrapper" style={{ height: "400px", marginTop: "20px" }}>
-        <div className="map-wrapper" style={{ height: "400px", marginTop: "20px" }}>
-  <MapContainer center={[10.779, 106.702]} zoom={16} style={{ height: "100%", width: "100%" }}>
-    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <MapContainer center={[10.779, 106.702]} zoom={16} style={{ height: "100%", width: "100%" }}>
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-    {/* 🏬 Cửa hàng */}
-    {Object.entries(storeLocations).map(([k, v]) => (
-      <Marker key={`store-${k}`} position={v} icon={storeIcon} />
-    ))}
+          {Object.entries(storeLocations).map(([k, v]) =>
+            v && Array.isArray(v) ? <Marker key={`store-${k}`} position={v} icon={storeIcon} /> : null
+          )}
 
-    {/* 👤 Người dùng */}
-    {Object.entries(userLocations).map(([k, v]) => (
-      <Marker key={`user-${k}`} position={v} icon={userIcon} />
-    ))}
+          {Object.entries(userLocations).map(([k, v]) =>
+            v && Array.isArray(v) ? <Marker key={`user-${k}`} position={v} icon={userIcon} /> : null
+          )}
 
-    {/* 🚁 Drone đang bay */}
-    {orders
-      .filter((o) => o.dronePos && Array.isArray(o.dronePos))
-      .map((o) => (
-        <Marker key={`drone-marker-${o.id}`} position={o.dronePos} icon={droneIcon}>
-          <Popup>
-            {o.drone} giao cho {o.user}
-          </Popup>
-        </Marker>
-      ))}
+          {orders.filter(o => o.dronePos && Array.isArray(o.dronePos)).map(o => (
+            <Marker key={`drone-${o.id}`} position={o.dronePos} icon={droneIcon}>
+              <Popup>
+                {o.drone} → {o.user}
+                <br />📏 Cách còn lại: {o.distance || 0} km
+              </Popup>
+            </Marker>
+          ))}
 
-    {/* ✅ Chỉ hiển thị đường khi đơn đang giao */}
-    {orders
-      .filter(
-        (o) =>
-          o.status === "delivering" &&
-          storeLocations[o.store] &&
-          userLocations[o.user]
-      )
-      .map((o) => (
-        <Polyline
-          key={`path-${o.id}`}
-          positions={[storeLocations[o.store], userLocations[o.user]]}
-          color="blue"
-        />
-      ))}
-  </MapContainer>
-</div>
-
+          {orders
+            .filter(o => o.status === "delivering")
+            .map(o => {
+              const start = storeLocations[o.store];
+              const end = userLocations[o.user];
+              if (!start || !end || !Array.isArray(start) || !Array.isArray(end)) return null;
+              return <Polyline key={`path-${o.id}`} positions={[start, end]} color="blue" />;
+            })}
+        </MapContainer>
       </div>
     </div>
   );

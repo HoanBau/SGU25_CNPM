@@ -227,3 +227,111 @@ button[onClick*="delete"]:hover {
     font-size: 12px;
   }
 }
+
+/* =========================
+   Overlay & Modal Hồ sơ & giấy tờ
+========================= */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 25px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  position: relative;
+  animation: slideDown 0.25s ease-in-out;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal h3, .modal h4 {
+  margin-top: 0;
+  color: #333;
+  font-weight: 600;
+}
+
+.modal img {
+  border-radius: 6px;
+  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.modal p {
+  margin: 6px 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.modal ul {
+  padding-left: 20px;
+}
+
+.modal ul li {
+  margin-bottom: 6px;
+}
+
+/* Nút Tài liệu 1/2 */
+.modal ul li button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.modal ul li button:hover {
+  background-color: #0056b3;
+}
+
+/* Nút đóng */
+.modal button[onClick*="setDocModal"], 
+.modal button[onClick*="setReviewingStore"] {
+  background-color: #ff6b6b;
+  margin-top: 10px;
+}
+
+.modal button[onClick*="setDocModal"]:hover,
+.modal button[onClick*="setReviewingStore"]:hover {
+  background-color: #e03e3e;
+}
+
+/* =========================
+   Animation
+========================= */
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes slideDown {
+  from {transform: translateY(-20px); opacity: 0;}
+  to {transform: translateY(0); opacity: 1;}
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .modal {
+    padding: 15px;
+  }
+
+  .modal img {
+    max-width: 100%;
+  }
+}

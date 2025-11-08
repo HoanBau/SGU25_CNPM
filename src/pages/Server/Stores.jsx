@@ -41,6 +41,41 @@ const makeFakeOrder = (store) => {
   };
 };
 
+const sampleApplications = [
+  {
+    id: 101,
+    owner: "Nguyễn Văn A",
+    businessLicense: "BL-123456789",
+    taxCode: "TX-987654321",
+    documents: [
+      "https://example.com/doc-license.jpg",
+      "https://example.com/doc-owner-id.jpg"
+    ],
+    logo: "https://example.com/logo-pho24.png",
+    menuSample: [
+      { name: "Phở bò tái", price: 70000 },
+      { name: "Phở gà", price: 65000 }
+    ],
+    openingHours: "06:00 - 22:00",
+  },
+  {
+    id: 102,
+    owner: "Trần Thị B",
+    businessLicense: "BL-2233445566",
+    taxCode: "TX-1122334455",
+    documents: [
+      "https://example.com/doc-license2.jpg",
+      "https://example.com/doc-owner2-id.jpg"
+    ],
+    logo: "https://example.com/logo-comtam123.png",
+    menuSample: [
+      { name: "Cơm sườn", price: 60000 },
+      { name: "Cơm gà chiên", price: 65000 }
+    ],
+    openingHours: "07:00 - 21:00",
+  },
+];
+
 const Stores = () => {
   /** =====================
    * 🔁 LOAD DỮ LIỆU LƯU TRỮ
@@ -64,6 +99,9 @@ const Stores = () => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [docModal, setDocModal] = useState({ open: false, type: null });
+
+
   const [newStore, setNewStore] = useState({
     name: "",
     address: "",
@@ -72,6 +110,7 @@ const Stores = () => {
   });
 
   const [autoRunning, setAutoRunning] = useState(false);
+  const [reviewingStore, setReviewingStore] = useState(null); // 👈 trạng thái review
   const autoRef = useRef(null);
 
   /** =====================
@@ -121,6 +160,9 @@ const Stores = () => {
   };
 
   const startReview = (id) => {
+    const store = stores.find(s => s.id === id);
+    const app = sampleApplications.find(app => app.id === id) || sampleApplications[0]; // fake data
+    setReviewingStore({ ...store, ...app }); // 👈 kết hợp thông tin store + hồ sơ
     setStores((prev) =>
       prev.map((s) =>
         s.id === id
@@ -138,6 +180,7 @@ const Stores = () => {
           : s
       )
     );
+    setReviewingStore(null);
   };
 
   const rejectStore = (id) => {
@@ -148,6 +191,7 @@ const Stores = () => {
           : s
       )
     );
+    setReviewingStore(null);
   };
 
   const activateStore = (id) => {
@@ -168,6 +212,7 @@ const Stores = () => {
           : s
       )
     );
+    setReviewingStore(null);
   };
 
   const generateOrder = (id) => {
@@ -292,6 +337,79 @@ const Stores = () => {
           </tbody>
         </table>
       </section>
+
+    {/* --- MODAL XEM HỒ SƠ KHI KIỂM DUYỆT --- */}
+{reviewingStore && (
+  <div className="modal-overlay">
+    <div className="modal">
+      <h3>📄 Kiểm duyệt hồ sơ: {reviewingStore.name}</h3>
+      <p><strong>Chủ cửa hàng:</strong> {reviewingStore.owner}</p>
+      <p><strong>Địa chỉ:</strong> {reviewingStore.address}</p>
+      <p><strong>SĐT:</strong> {reviewingStore.phone}</p>
+      <p><strong>Giấy phép kinh doanh:</strong> {reviewingStore.businessLicense}</p>
+      <p><strong>Mã số thuế:</strong> {reviewingStore.taxCode}</p>
+      <p><strong>Thời gian mở cửa:</strong> {reviewingStore.openingHours}</p>
+      <p><strong>Menu mẫu:</strong></p>
+      <ul>
+        {reviewingStore.menuSample.map((m, i) => <li key={i}>{m.name} - {currency(m.price)}</li>)}
+      </ul>
+
+      <p><strong>Hồ sơ giấy tờ:</strong></p>
+      <ul>
+        <li><button onClick={() => setDocModal({ open: true, type: "CCCD" })}>Tài liệu 1</button></li>
+        <li><button onClick={() => setDocModal({ open: true, type: "GPKD" })}>Tài liệu 2</button></li>
+      </ul>
+
+      {reviewingStore.logo && <img src={reviewingStore.logo} alt="Logo" style={{ width: 100, marginTop: 10 }} />}
+
+      <div style={{ marginTop: 12 }}>
+        {/* <button onClick={() => acceptStore(reviewingStore.id)}>✅ Chấp nhận</button>
+        <button onClick={() => rejectStore(reviewingStore.id)}>❌ Từ chối</button>
+        <button onClick={() => requestMoreDocs(reviewingStore.id)}>📎 Yêu cầu bổ sung</button> */}
+        <button onClick={() => setReviewingStore(null)} style={{ marginLeft: 6 }}>✖ Đóng</button>
+      </div>
+    </div>
+
+    {/* --- Popup giấy tờ giả lập duy nhất --- */}
+    {docModal.open && (
+      <div className="modal-overlay">
+        <div className="modal">
+          {docModal.type === "CCCD" && (
+            <>
+              <h4>Giấy CCCD giả lập</h4>
+              <img
+                src="https://via.placeholder.com/400x250?text=CCCD+Giả+lập"
+                alt="CCCD"
+                style={{ width: "100%", maxWidth: 400, marginTop: 10 }}
+              />
+              <p>Họ tên: Nguyễn Văn A</p>
+              <p>Ngày sinh: 01/01/1990</p>
+              <p>Số CCCD: 123456789</p>
+              <p>Địa chỉ: Quận 1, TP.HCM</p>
+            </>
+          )}
+          {docModal.type === "GPKD" && (
+            <>
+              <h4>Giấy phép kinh doanh giả lập</h4>
+              <img
+                src="https://via.placeholder.com/400x250?text=Giấy+Phép+Kinh+Doanh+Giả+lập"
+                alt="GPKD"
+                style={{ width: "100%", maxWidth: 400, marginTop: 10 }}
+              />
+              <p>Tên doanh nghiệp: Phở 24</p>
+              <p>Mã số thuế: 0123456789</p>
+              <p>Ngày cấp: 01/01/2023</p>
+              <p>Địa chỉ: Quận 1, TP.HCM</p>
+            </>
+          )}
+          <div style={{ marginTop: 12 }}>
+            <button onClick={() => setDocModal({ open: false, type: null })}>✖ Đóng</button>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+)}
 
       {/* --- ĐƠN HÀNG --- */}
       <section className="panel">
