@@ -13,7 +13,7 @@ const ManageFood = () => {
     category: "",
   });
 
-  const [showPopup, setShowPopup] = useState(false); // state popup
+  const [showPopup, setShowPopup] = useState(false);
 
   const categories = [...new Set(foodItems.map(f => f.category))];
 
@@ -38,9 +38,8 @@ const ManageFood = () => {
 
     setNewFood({ name: "", price: "", image: "", category: "" });
 
-    // hiện popup
     setShowPopup(true);
-    setTimeout(() => setShowPopup(false), 2000); // ẩn popup sau 2s
+    setTimeout(() => setShowPopup(false), 2000);
   };
 
   const handleReset = () => {
@@ -57,10 +56,8 @@ const ManageFood = () => {
     <div className="manage-food-container">
       <h1>🍜 Quản lý món ăn</h1>
 
-      {/* Popup thông báo */}
       {showPopup && <div className="popup-success">✅ Thêm món thành công!</div>}
 
-      {/* Form thêm món mới */}
       <div className="add-food-form">
         <h2>Thêm món mới</h2>
         <form onSubmit={handleAddFood}>
@@ -99,16 +96,10 @@ const ManageFood = () => {
         </form>
       </div>
 
-      {/* Nút reset món ăn gốc */}
-      <button
-        className="reset-btn"
-        onClick={handleReset}
-        style={{ margin: "20px 0", backgroundColor: "#ff9900", color: "#fff" }}
-      >
+      <button className="reset-btn" onClick={handleReset}>
         Reset món ăn gốc
       </button>
 
-      {/* Bảng danh sách món ăn */}
       <table className="food-table">
         <thead>
           <tr>
@@ -122,24 +113,30 @@ const ManageFood = () => {
         <tbody>
           {foodItems.map((food) => (
             <tr key={food._id}>
-              <td>{food.name}</td>
+              <td>
+                <div className="food-name-cell">
+                  {food.image && <img src={food.image} alt={food.name} className="food-thumb" />}
+                  <span>{food.name}</span>
+                </div>
+              </td>
               <td>{food.price.toLocaleString("vi-VN")} ₫</td>
               <td>{food.category}</td>
               <td>{food.soldOut ? "Hết hàng" : "Còn hàng"}</td>
               <td>
-                <button
-                  className={`toggle-btn ${food.soldOut ? "soldout" : ""}`}
-                  onClick={() => toggleSoldOut(food._id)}
-                >
-                  {food.soldOut ? "Mở bán lại" : "Đánh dấu hết hàng"}
-                </button>
-                <button
-                  className="delete-btn"
-                  onClick={() => deleteFood(food._id)}
-                  style={{ marginLeft: "10px", backgroundColor: "#ff4d4d", color: "#fff" }}
-                >
-                  Xóa
-                </button>
+                <div className="action-buttons">
+                  <button
+                    className={`toggle-btn ${food.soldOut ? "soldout" : ""}`}
+                    onClick={() => toggleSoldOut(food._id)}
+                  >
+                    {food.soldOut ? "Mở bán lại" : "Hết hàng"}
+                  </button>
+                  <button
+                    className="delete-btn"
+                    onClick={() => deleteFood(food._id)}
+                  >
+                    Xóa
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

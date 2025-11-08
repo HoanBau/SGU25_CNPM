@@ -1,142 +1,192 @@
 .manage-food-container {
-  padding: 20px;
-  font-family: "Arial", sans-serif;
+  background-color: #f7f9fc;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  font-family: "Inter", sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/* Bảng món ăn */
+h1 {
+  color: #2c3e50;
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.add-food-form {
+  background-color: #fff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.add-food-form h2 {
+  color: #ff7b00;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.add-food-form form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.add-food-form input,
+.add-food-form select {
+  flex: 1 1 200px;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+
+.add-food-form input:focus,
+.add-food-form select:focus {
+  border-color: #ff7b00;
+  outline: none;
+  box-shadow: 0 0 6px rgba(255,123,0,0.3);
+}
+
+.add-food-form button {
+  background-color: #ff7b00;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  cursor: pointer;
+}
+
+.reset-btn {
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  background-color: #ff9900;
+  color: #fff;
+}
+
 .food-table {
   width: 100%;
   border-collapse: collapse;
-  background: white;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-.food-table th, .food-table td {
-  padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-/* Hover row */
-.food-table tbody tr:hover {
-  background-color: #f9f9f9;
-}
-
-/* Nút toggle (hết hàng / mở bán) */
-.toggle-btn {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  background-color: #2ecc71;
+.food-table th {
+  background-color: #ff7b00;
   color: white;
-  font-weight: bold;
-  transition: 0.2s;
+  padding: 14px 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.food-table td {
+  padding: 5px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+.food-table tr:hover {
+  background-color: #fff3e6;
+}
+
+.food-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.food-thumb {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* --- HÀNH ĐỘNG --- */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.delete-btn {
+  height: 36px;                /* bằng với nút Hết hàng */
+  min-width: 90px;             /* đảm bảo đủ rộng cho chữ Xóa */
+  padding: 0 14px;             /* padding ngang, padding dọc = 0 để height chuẩn */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border-radius: 6px;
+  background-color: #ff4d4d;
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;         /* tránh chữ xuống dòng */
+  text-align: center;
+}
+
+
+
+.toggle-btn {
+  background-color: #27ae60;
+  color: #fff;
 }
 
 .toggle-btn.soldout {
   background-color: #e74c3c;
 }
 
-.toggle-btn:hover {
-  opacity: 0.85;
-}
-
-/* Nút xóa */
 .delete-btn {
-  padding: 6px 10px;
-  margin-left: 8px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  background-color: #c0392b;
-  color: white;
-  font-weight: bold;
-  transition: 0.2s;
+  background-color: #ff4d4d;
+  color: #fff;
 }
 
+.toggle-btn:hover,
 .delete-btn:hover {
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
-/* Form thêm món */
-.add-food-form {
-  margin-bottom: 20px;
-  background-color: #fef9f5;
-  padding: 15px 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.add-food-form h2 {
-  margin-bottom: 10px;
-  color: #e67e22;
-}
-
-.add-food-form form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.add-food-form input,
-.add-food-form select {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  flex: 1 1 180px;
-}
-
-.add-food-form button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  background-color: #3498db;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.add-food-form button:hover {
-  background-color: #2980b9;
-}
-
-/* Trạng thái món ăn */
-.food-table td.status {
-  font-weight: bold;
-}
-
-.food-table td.status.soldout {
-  color: #e74c3c;
-}
-
-.food-table td.status.available {
-  color: #27ae60;
-}
-
+/* Popup */
 .popup-success {
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: #2ecc71;
+  background: #27ae60;
   color: white;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: bold;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  z-index: 1000;
-  animation: fadein 0.3s, fadeout 0.3s 1.7s;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+  animation: slideIn 0.3s ease, fadeout 0.5s 1.5s forwards;
 }
 
-@keyframes fadein {
-  from { opacity: 0; transform: translateY(-10px);}
-  to { opacity: 1; transform: translateY(0);}
+@keyframes slideIn {
+  from { transform: translateX(100px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes fadeout {
-  from { opacity: 1; transform: translateY(0);}
-  to { opacity: 0; transform: translateY(-10px);}
+  to { opacity: 0; transform: translateX(100px); }
+}
+
+@media (max-width: 768px) {
+  .add-food-form form {
+    flex-direction: column;
+  }
+
+  .food-table th, .food-table td {
+    padding: 10px 8px;
+  }
 }
