@@ -5,7 +5,15 @@ import "./Sidebar.css";
 const Sidebar = ({ setView, currentView }) => {
   return (
     <div className="sidebar">
-      <h2>Admin Panel</h2>
+       {/* ===== Header có logo và tiêu đề ===== */}
+      <div className="sidebar-header">
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png"
+          alt="logo"
+          className="sidebar-logo"
+        />
+        <h2>FoodFast Panel</h2>
+      </div>
       <ul>
         <li
           className={currentView === "dashboard" ? "active" : ""}

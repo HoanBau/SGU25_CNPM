@@ -55,12 +55,10 @@ const Users = () => {
     return stored ? JSON.parse(stored) : [];
   });
 
-  // Lưu dữ liệu user vào localStorage
   useEffect(() => {
     localStorage.setItem(USERS_KEY, JSON.stringify(users));
   }, [users]);
 
-  // Thêm user mới
   const addUser = () => {
     if (!newUser.name || !newUser.email) return;
     const id = users.length > 0 ? users[users.length - 1].id + 1 : 1;
@@ -86,25 +84,20 @@ const Users = () => {
   };
 
   const deleteUser = (id) => setUsers(users.filter((u) => u.id !== id));
-
   const startEdit = (user) => {
     setEditingId(user.id);
     setEditingUser({ ...user });
   };
-
   const saveEdit = (id) => {
     setUsers(users.map((u) => (u.id === id ? { ...u, ...editingUser } : u)));
     setEditingId(null);
   };
-
   const approveUser = (id) => {
     setUsers(users.map((u) => (u.id === id ? { ...u, status: "approved" } : u)));
   };
-
   const rejectUser = (id) => {
     setUsers(users.map((u) => (u.id === id ? { ...u, status: "rejected" } : u)));
   };
-
   const toggleCustomerStatus = (id) => {
     setUsers(
       users.map((u) =>
@@ -114,8 +107,6 @@ const Users = () => {
       )
     );
   };
-
-  // ✅ Giả lập cập nhật tỷ lệ & báo cáo
   const updateStats = (id, successChange, reportChange) => {
     const updated = users.map((u) => {
       if (u.id === id) {
@@ -123,60 +114,23 @@ const Users = () => {
         let newReports = Math.max(0, u.reports + reportChange);
         let status = u.status;
 
-        // 🔒 Tự động khóa nếu tỉ lệ thấp hoặc bị báo cáo nhiều
-        if (newRate < 50 || newReports >= 5) {
-          status = "blocked";
-        }
+        if (newRate < 50 || newReports >= 5) status = "blocked";
 
         return { ...u, successRate: newRate, reports: newReports, status };
       }
       return u;
     });
-
     setUsers(updated);
     localStorage.setItem(USERS_KEY, JSON.stringify(updated));
   };
 
-  // 📊 Tổng hợp thống kê
-  const totalUsers = users.length;
-  const totalBlocked = users.filter((u) => u.status === "blocked").length;
-  const totalCustomers = users.filter((u) => u.role === "customer").length;
-  const totalStores = users.filter((u) => u.role === "admin").length;
-
-  const avgSuccessRate =
-    users.length > 0
-      ? Math.round(
-          users.reduce((sum, u) => sum + (u.successRate || 0), 0) / users.length
-        )
-      : 0;
+  // Tách users theo role
+  const adminUsers = users.filter((u) => u.role === "admin");
+  const customerUsers = users.filter((u) => u.role === "customer");
 
   return (
     <div className="users-container">
       <h1>👤 Quản lý người dùng</h1>
-
-      {/* 🔹 Thống kê tổng quan */}
-      <div className="stats-summary">
-        <div className="stat-item">
-          <h3>👥 Tổng người dùng</h3>
-          <p>{totalUsers}</p>
-        </div>
-        <div className="stat-item">
-          <h3>🚫 Bị khóa</h3>
-          <p>{totalBlocked}</p>
-        </div>
-        <div className="stat-item">
-          <h3>📦 Nhà hàng</h3>
-          <p>{totalStores}</p>
-        </div>
-        <div className="stat-item">
-          <h3>🛒 Khách hàng</h3>
-          <p>{totalCustomers}</p>
-        </div>
-        <div className="stat-item">
-          <h3>📈 Tỷ lệ trung bình</h3>
-          <p>{avgSuccessRate}%</p>
-        </div>
-      </div>
 
       {/* Form thêm user */}
       <div className="user-form">
@@ -227,86 +181,85 @@ const Users = () => {
         <button onClick={addUser}>Thêm người dùng</button>
       </div>
 
-      {/* Bảng user */}
+      {/* Khung Nhà hàng */}
+      <div className="section-title">🏢 Nhà hàng</div>
       <table className="users-table">
         <thead>
           <tr>
             <th>ID</th>
             <th>Tên</th>
             <th>Email</th>
-            <th>Vai trò</th>
-            <th>Trạng thái / Cửa hàng</th>
+            <th>Trạng thái</th>
+            <th>Cửa hàng</th>
             <th>Tỷ lệ</th>
             <th>Báo cáo</th>
             <th>Hành động</th>
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
+          {adminUsers.map((user) => (
             <tr key={user.id} className={user.status === "blocked" ? "blocked-row" : ""}>
               <td>{user.id}</td>
+              <td>{editingId === user.id ? <input value={editingUser.name} onChange={e=>setEditingUser({...editingUser,name:e.target.value})}/> : user.name}</td>
+              <td>{editingId === user.id ? <input value={editingUser.email} onChange={e=>setEditingUser({...editingUser,email:e.target.value})}/> : user.email}</td>
               <td>
-                {editingId === user.id ? (
-                  <input
-                    type="text"
-                    value={editingUser.name}
-                    onChange={(e) =>
-                      setEditingUser({ ...editingUser, name: e.target.value })
-                    }
-                  />
-                ) : (
-                  user.name
-                )}
+                {user.status === "pending" ? "⏳ Chờ duyệt" : user.status === "rejected" ? "❌ Từ chối" : user.status === "blocked" ? "🔒 Bị khóa" : "✅ Đã duyệt"}
               </td>
+              <td>{stores.find(s=>s.id===user.storeId)?.name || "-"}</td>
+              <td>{user.successRate}%</td>
+              <td>{user.reports}</td>
               <td>
-                {editingId === user.id ? (
-                  <input
-                    type="email"
-                    value={editingUser.email}
-                    onChange={(e) =>
-                      setEditingUser({ ...editingUser, email: e.target.value })
-                    }
-                  />
-                ) : (
-                  user.email
-                )}
-              </td>
-              <td>{user.role === "admin" ? "Nhà hàng" : "Khách hàng"}</td>
-              <td>
-                {user.role === "admin"
-                  ? user.status === "pending"
-                    ? "⏳ Chờ duyệt"
-                    : user.status === "rejected"
-                    ? "❌ Từ chối"
-                    : user.status === "blocked"
-                    ? "🔒 Bị khóa"
-                    : stores.find((s) => s.id === user.storeId)?.name || "-"
-                  : user.status === "active"
-                  ? "✅ Đang hoạt động"
-                  : "⚫ Ngừng hoạt động"}
-              </td>
-              <td>{user.successRate ?? 0}%</td>
-              <td>{user.reports ?? 0}</td>
-              <td>
-                {editingId === user.id ? (
-                  <button onClick={() => saveEdit(user.id)}>Lưu</button>
-                ) : (
+                {editingId===user.id ? <button onClick={()=>saveEdit(user.id)}>Lưu</button> : (
                   <>
-                    <button onClick={() => startEdit(user)}>✏️ Sửa</button>
-                    <button onClick={() => deleteUser(user.id)}>🗑 Xóa</button>
-                    {user.role === "admin" && user.status === "pending" && (
-                      <>
-                        <button onClick={() => approveUser(user.id)}>✅ Duyệt</button>
-                        <button onClick={() => rejectUser(user.id)}>❌ Từ chối</button>
-                      </>
-                    )}
-                    {user.role === "customer" && (
-                      <button onClick={() => toggleCustomerStatus(user.id)}>
-                        {user.status === "active" ? "🔒 Khóa" : "🔓 Mở"}
-                      </button>
-                    )}
-                    <button onClick={() => updateStats(user.id, +10, 0)}>+ Thành công</button>
-                    <button onClick={() => updateStats(user.id, -10, +1)}>+ Báo cáo</button>
+                    <button onClick={()=>startEdit(user)}>✏️ Sửa</button>
+                    <button onClick={()=>deleteUser(user.id)}>🗑 Xóa</button>
+                    {user.status==="pending" && <>
+                      <button onClick={()=>approveUser(user.id)}>✅ Duyệt</button>
+                      <button onClick={()=>rejectUser(user.id)}>❌ Từ chối</button>
+                    </>}
+                    <button onClick={()=>updateStats(user.id, +10,0)}>+ Thành công</button>
+                    <button onClick={()=>updateStats(user.id,-10,+1)}>+ Báo cáo</button>
+                  </>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Khung Khách hàng */}
+      <div className="section-title">🛒 Khách hàng</div>
+      <table className="users-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Email</th>
+            <th>Trạng thái</th>
+            <th>Tỷ lệ</th>
+            <th>Báo cáo</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
+          {customerUsers.map((user) => (
+            <tr key={user.id} className={user.status === "blocked" ? "blocked-row" : ""}>
+              <td>{user.id}</td>
+              <td>{editingId === user.id ? <input value={editingUser.name} onChange={e=>setEditingUser({...editingUser,name:e.target.value})}/> : user.name}</td>
+              <td>{editingId === user.id ? <input value={editingUser.email} onChange={e=>setEditingUser({...editingUser,email:e.target.value})}/> : user.email}</td>
+              <td>{user.status==="active" ? "✅ Đang hoạt động" : user.status==="inactive" ? "⚫ Ngừng hoạt động" : "🔒 Bị khóa"}</td>
+              <td>{user.successRate}%</td>
+              <td>{user.reports}</td>
+              <td>
+                {editingId===user.id ? <button onClick={()=>saveEdit(user.id)}>Lưu</button> : (
+                  <>
+                    <button onClick={()=>startEdit(user)}>✏️ Sửa</button>
+                    <button onClick={()=>deleteUser(user.id)}>🗑 Xóa</button>
+                    <button onClick={()=>toggleCustomerStatus(user.id)}>
+                      {user.status==="active" ? "🔒 Khóa" : "🔓 Mở"}
+                    </button>
+                    <button onClick={()=>updateStats(user.id, +10,0)}>+ Thành công</button>
+                    <button onClick={()=>updateStats(user.id,-10,+1)}>+ Báo cáo</button>
                   </>
                 )}
               </td>

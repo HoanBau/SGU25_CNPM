@@ -1,16 +1,51 @@
-/* Users.css - hiện đại & responsive */
 .users-container {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   padding: 20px;
-  background-color: #f4f6f8;
+  background-color: #f5f7fa;
   min-height: 100vh;
 }
 
 .users-container h1 {
   margin-bottom: 20px;
-  color: #333;
+  color: #222;
   font-size: 28px;
   font-weight: 600;
+  text-align: center;
+}
+
+/* Stats summary */
+.stats-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.stat-item {
+  background: #ffffff;
+  padding: 14px 18px;
+  border-radius: 12px;
+  text-align: center;
+  flex: 1;
+  min-width: 120px;
+  box-shadow: 0 2px 6px rgba(0,0,50,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.stat-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,50,0.15);
+}
+
+.stat-item h3 {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.stat-item p {
+  font-size: 18px;
+  font-weight: 600;
+  color: #007bff;
 }
 
 /* Form thêm user */
@@ -18,41 +53,53 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
 .user-form input,
 .user-form select {
-  padding: 8px 12px;
+  padding: 10px 12px;
   font-size: 14px;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: 8px;
   flex: 1;
   min-width: 150px;
   transition: all 0.3s;
 }
-
 .user-form input:focus,
 .user-form select:focus {
   outline: none;
-  border-color: #4caf50;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+  border-color: #007bff;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.25);
 }
 
 .user-form button {
-  padding: 8px 16px;
+  padding: 10px 16px;
   font-size: 14px;
-  background-color: #4caf50;
+  background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s;
 }
-
 .user-form button:hover {
-  background-color: #45a049;
+  background-color: #0056b3;
   transform: translateY(-1px);
+}
+
+/* Section khung */
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 20px 0 10px;
+  color: #333;
+  border-left: 5px solid #007bff;
+  padding-left: 10px;
 }
 
 /* Bảng user */
@@ -61,8 +108,9 @@
   border-collapse: collapse;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   background-color: #fff;
+  margin-bottom: 30px;
 }
 
 .users-table th,
@@ -75,134 +123,93 @@
 }
 
 .users-table th {
-  background: linear-gradient(90deg, #f1f1f1, #e2e2e2);
+  background: linear-gradient(90deg, #f0f4f8, #e2e6ea);
   font-weight: 600;
   color: #333;
 }
 
 .users-table tr:hover {
-  background-color: #f9fafb;
+  background-color: #f9f9f9;
   transition: background 0.3s;
 }
 
-/* Button hành động trong bảng */
+/* Row blocked */
+.blocked-row {
+  background-color: #ffe5e5 !important;
+}
+
+/* Button hành động */
 .users-table td button {
-  margin: 0 4px;
-  padding: 6px 12px;
+  margin: 2px 3px;
+  padding: 5px 10px;
   font-size: 13px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
-.users-table td button:first-child {
-  background-color: #2196f3;
-  color: white;
+/* Các loại button */
+.users-table td button:nth-child(1) { 
+  background: #2196f3; 
+  color: #fff; 
 }
 
-.users-table td button:first-child:hover {
-  background-color: #1e88e5;
-  transform: translateY(-1px);
+.users-table td button:nth-child(2) { 
+  background: #f44336; 
+  color: #fff; 
 }
 
-.users-table td button:last-child {
-  background-color: #f44336;
-  color: white;
+.users-table td button:hover { 
+  opacity: 0.85; 
+  transform: translateY(-1px); 
 }
 
-.users-table td button:last-child:hover {
-  background-color: #e53935;
-  transform: translateY(-1px);
+/* Status badge */
+.users-table td span.status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.85em;
+}
+.users-table td span.status.active { 
+  background: #d4edda; 
+  color: #155724; 
 }
 
-/* Select trong bảng */
-.users-table select {
-  padding: 6px 8px;
-  font-size: 13px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  transition: all 0.3s;
+.users-table td span.status.inactive { 
+  background: #fff3cd; 
+  color: #856404; 
 }
 
-.users-table select:focus {
-  outline: none;
-  border-color: #4caf50;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+.users-table td span.status.pending { 
+  background: #ffeeba; 
+  color: #856404; 
+}
+
+.users-table td span.status.rejected { 
+  background: #f8d7da; 
+  color: #721c24; 
+}
+
+.users-table td span.status.blocked { 
+  background: #f5c6cb; 
+  color: #721c24; 
 }
 
 /* Responsive */
 @media (max-width: 992px) {
   .user-form input,
   .user-form select,
-  .user-form button {
-    font-size: 13px;
-    padding: 6px 10px;
-  }
-
+  .user-form button { font-size: 13px; padding: 8px 10px; }
   .users-table th,
-  .users-table td {
-    padding: 10px;
-    font-size: 13px;
-  }
+  .users-table td { padding: 10px; font-size: 13px; }
 }
 
 @media (max-width: 600px) {
-  .users-container h1 {
-    font-size: 22px;
-  }
-
-  .user-form {
-    flex-direction: column;
-  }
-
-  .users-table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
+  .user-form { flex-direction: column; }
+  .users-table { display: block; overflow-x: auto; white-space: nowrap; }
   .users-table th,
-  .users-table td {
-    padding: 8px;
-    font-size: 12px;
-  }
-
-  .users-table td button {
-    padding: 4px 8px;
-    font-size: 11px;
-  }
-
-  .users-table select {
-    padding: 4px 6px;
-    font-size: 12px;
-  }
-}
-
-
-.stats-summary {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.stat-item {
-  background: #e3f2fd;
-  padding: 10px 16px;
-  border-radius: 10px;
-  text-align: center;
-  flex: 1;
-  box-shadow: 0 2px 6px rgba(0, 0, 50, 0.1);
-}
-
-.stat-item h3 {
-  font-size: 14px;
-  color: #004b91;
-  margin-bottom: 5px;
-}
-
-.stat-item p {
-  font-size: 18px;
-  font-weight: bold;
-  color: #0066cc;
+  .users-table td { padding: 8px; font-size: 12px; }
+  .users-table td button { padding: 4px 6px; font-size: 11px; }
 }

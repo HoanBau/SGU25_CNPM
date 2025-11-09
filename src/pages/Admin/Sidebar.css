@@ -1,22 +1,48 @@
+/* ================== SIDEBAR TỔNG ================== */
 .sidebar {
   width: 240px;
-  background: #ffffff;
-  border-right: 1px solid #eaeaea;
-  padding: 20px;
   min-height: 100vh;
+  background: linear-gradient(180deg, #ffffff 0%, #fff5f5 100%);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 25px 20px;
   display: flex;
   flex-direction: column;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  justify-content: space-between;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
+  font-family: "Inter", "Segoe UI", Tahoma, sans-serif;
+  transition: all 0.3s ease;
+}
+
+/* ================== HEADER ================== */
+.sidebar-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 35px;
+}
+
+.sidebar-logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(255, 77, 79, 0.25);
+  margin-bottom: 12px;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-logo:hover {
+  transform: scale(1.08);
 }
 
 .sidebar h2 {
   font-size: 20px;
-  margin-bottom: 30px;
-  font-weight: 700;
-  color: #ff4d4f; /* màu chủ đạo giống user */
+  color: #ff4d4f;
   text-align: center;
+  letter-spacing: 0.5px;
 }
 
+/* ================== MENU ================== */
 .sidebar ul {
   list-style: none;
   padding: 0;
@@ -25,58 +51,86 @@
 }
 
 .sidebar ul li {
-  margin: 12px 0;
-  padding: 12px 15px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 16px;
+  margin: 10px 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 15.5px;
   font-weight: 500;
   color: #333;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 10px;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
+  position: relative;
 }
 
+/* Hover nhẹ nhàng */
 .sidebar ul li:hover {
-  background: #ffecec; /* nhấn nhá màu nhạt */
+  background: rgba(255, 77, 79, 0.08);
   color: #ff4d4f;
-  transform: translateX(4px);
+  transform: translateX(6px);
 }
 
+/* ================== ACTIVE ITEM ================== */
 .sidebar ul li.active {
-  background: #ff4d4f;
+  background: linear-gradient(90deg, #ff4d4f 0%, #ff7a45 100%);
   color: white;
+  box-shadow: 0 4px 12px rgba(255, 77, 79, 0.25);
+  transform: scale(1.03);
 }
 
+/* Vạch trái khi active */
+.sidebar ul li.active::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background-color: #ff4d4f;
+  border-radius: 4px;
+}
+
+/* ================== FOOTER ================== */
 .sidebar-footer {
   margin-top: auto;
   padding-top: 20px;
   border-top: 1px solid #eee;
   font-size: 14px;
   text-align: center;
-  color: #888;
+  color: #999;
 }
 
-
- /* Responsive: collapse sidebar trên mobile */
+/* ================== RESPONSIVE ================== */
 @media (max-width: 768px) {
   .sidebar {
-    width: 60px;
-    min-width: 60px;
+    width: 70px;
+    min-width: 70px;
     padding: 10px;
+    align-items: center;
   }
 
   .sidebar h2 {
-    display: none; /* ẩn tên */
+    display: none;
   }
 
-  .sidebar li {
+  .sidebar ul li {
     justify-content: center;
     padding: 10px;
   }
 
-  .sidebar li span {
-    display: none; /* ẩn text, chỉ còn icon */
+  .sidebar ul li span {
+    display: none;
+  }
+
+  .sidebar-logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .sidebar-footer {
+    font-size: 12px;
   }
 }
