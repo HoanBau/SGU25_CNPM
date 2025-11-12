@@ -123,3 +123,101 @@
 }
 
 .drone-map { height: 65vh; width: 100%; }
+/* ================== MOBILE ================== */
+@media (max-width: 768px) {
+
+  /* Container chính */
+  .drone-map-container {
+    padding: 0px; 
+    border-radius: 8px; 
+  }
+
+  /* Tiêu đề */
+  .page-title {
+    font-size: 1.5rem; /* vừa phải trên mobile */
+    margin-bottom: 1px;
+    text-align: left;  /* căn trái */
+    margin-top: 1px;
+  }
+
+  /* Orders section */
+  .orders-section {
+    grid-template-columns: 1fr; /* 1 cột full width */
+    gap: 12px;
+  }
+
+  .order-box {
+    padding: 12px; /* gọn hơn */
+    border-radius: 8px;
+  }
+
+  .order-box h3 {
+    font-size: 1rem; /* vừa hơn */
+    margin-bottom: 8px;
+  }
+
+  /* Order card */
+  .order-card {
+    padding: 6px 8px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+  }
+
+  .order-card.completed {
+    border-left-width: 4px;
+  }
+
+  .order-info {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .order-meta {
+    font-size: 0.8rem;
+  }
+
+  .order-card button {
+    padding: 5px 8px;
+    font-size: 0.85rem;
+  }
+
+  /* Control section */
+  .control-section {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+
+  .address-input {
+    flex-direction: column; /* stack input + button */
+    gap: 8px;
+  }
+
+  .address-input input,
+  .address-input button {
+    width: 100%;
+  }
+
+  /* Status box */
+  .status-box {
+    padding: 8px 10px;
+    border-radius: 6px;
+  }
+
+  /* Start button */
+  .start-button {
+    padding: 8px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+  }
+
+  /* Map */
+  .map-container {
+    border-radius: 8px;
+  }
+
+  .drone-map {
+    height: 50vh; /* gọn hơn cho mobile */
+    width: 100%;
+  }
+}
