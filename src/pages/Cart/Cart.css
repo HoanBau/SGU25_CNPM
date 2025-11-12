@@ -204,3 +204,110 @@
   text-align: center;
   font-weight: bold;
 }
+
+/* ================== CART MOBILE ================== */
+@media (max-width: 768px) {
+
+  .cart {
+    margin-top: 50px; /* giảm khoảng cách top */
+    padding: 0 10px;
+  }
+
+  /* Tiêu đề cart items */
+  .cart-items-title {
+    grid-template-columns: 1fr 2fr 1fr 1fr 1fr 0.5fr; /* giảm độ rộng các cột */
+    font-size: 12px;
+  }
+
+  .cart-items-item {
+    display: grid;
+    grid-template-columns: 0.8fr 2fr 1fr 1fr 1fr 0.5fr;
+    font-size: 13px;
+    margin: 6px 0;
+    gap: 5px;
+  }
+
+  .cart-items-item img {
+    width: 70%;
+    border-radius: 6px;
+  }
+
+  .cart-items-item .Remove {
+    width: 100%;
+  }
+
+  .NoItems {
+    padding: 6px 0;
+    font-size: 13px;
+  }
+
+  /* Cart bottom */
+  .cart-bottom {
+    flex-direction: column-reverse;
+    gap: 15px;
+  }
+
+  .cart-total button {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 14px;
+  }
+
+  .cart-promocode {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .cart-promocode-input {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cart-promocode-input input {
+    width: 100%;
+    padding: 8px 10px;
+  }
+
+  .cart-promocode-input button {
+    width: 100%;
+    padding: 10px 0;
+  }
+
+  /* Discount box */
+  .cart-discount-box {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .discount-input {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+
+  .discount-btn {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 14px;
+  }
+
+  .discount-error, .discount-success {
+    font-size: 13px;
+  }
+
+  /* Counter */
+  .cart-counter {
+    gap: 4px;
+  }
+
+  .counter-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+  }
+
+  .counter-number {
+    min-width: 18px;
+    font-size: 14px;
+  }
+}
