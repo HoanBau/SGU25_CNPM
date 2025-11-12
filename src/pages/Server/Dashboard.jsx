@@ -92,23 +92,24 @@ const Dashboard = ({ stores, drones, orders }) => {
             </tr>
           </thead>
           <tbody>
-            {topStores.map((store) => {
-              const commission = (store.revenue || 0) * GRAB_COMMISSION;
-              const restaurantPart = (store.revenue || 0) - commission;
+  {topStores.map((store) => {
+    const commission = (store.revenue || 0) * GRAB_COMMISSION;
+    const restaurantPart = (store.revenue || 0) - commission;
 
-              return (
-                <tr key={store.id}>
-                  <td>{store.id}</td>
-                  <td>{store.name}</td>
-                  <td>{formatCurrency(store.revenue)}</td>
-                  <td>{formatCurrency(commission)}</td>
-                  <td>{formatCurrency(restaurantPart)}</td>
-                  <td>{getOrderCount(store.name)}</td>
-                  <td>{translateStoreStatus(store.status)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
+    return (
+      <tr key={store.id}>
+        <td data-label="ID">{store.id}</td>
+        <td data-label="Tên cửa hàng">{store.name}</td>
+        <td data-label="Doanh thu gốc">{formatCurrency(store.revenue)}</td>
+        <td data-label="Chiết khấu Grab (20%)">{formatCurrency(commission)}</td>
+        <td data-label="Nhà hàng nhận">{formatCurrency(restaurantPart)}</td>
+        <td data-label="Tổng đơn hàng">{getOrderCount(store.name)}</td>
+        <td data-label="Trạng thái">{translateStoreStatus(store.status)}</td>
+      </tr>
+    );
+  })}
+</tbody>
+
         </table>
       </div>
     </div>

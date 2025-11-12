@@ -175,3 +175,65 @@
     font-size: 12px;
   }
 }
+
+@media (max-width: 600px) {
+  .drones-table thead {
+    display: none; /* ẩn header */
+  }
+
+  .drones-table, .drones-table tbody, .drones-table tr, .drones-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .drones-table tr {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #fff;
+  }
+
+  .drones-table td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+    border: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  .drones-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    width: 45%;
+    padding-left: 5px;
+    font-weight: 600;
+    text-align: left;
+    color: #333;
+  }
+
+  /* Dropdown & button full width */
+  .drones-table td select,
+  .drones-table td button {
+    width: 100%;
+    margin-top: 5px;
+  }
+}
+
+@media (max-width: 600px) {
+  .drones-table td[data-label="Hành động"] {
+    display: flex;
+    flex-direction: column; /* xếp dọc */
+    align-items: stretch;   /* dropdown & button full width */
+    gap: 5px;               /* khoảng cách giữa các nút */
+  }
+
+  .drones-table td[data-label="Hành động"] select,
+  .drones-table td[data-label="Hành động"] button {
+    width: 100%;
+    font-size: 12px;       /* nhỏ vừa đủ đọc */
+    padding: 6px 8px;
+  }
+}
+

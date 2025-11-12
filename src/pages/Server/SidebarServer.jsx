@@ -1,57 +1,74 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./SidebarServer.css";
 
-// Sidebar cho trang Server
 const SidebarServer = ({ setView, currentView }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Cập nhật isMobile khi resize
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const toggleSidebar = () => setIsOpen(!isOpen);
+  const closeSidebar = () => setIsOpen(false);
+
   return (
-    <div className="sidebar-server">
-      <h2>Server Panel</h2>
-      <ul>
-        <li
-          className={currentView === "dashboard" ? "active" : ""}
-          onClick={() => setView("dashboard")}
-        >
-          📊 Dashboard
-        </li>
+    <>
+      {/* Hamburger chỉ hiện trên mobile */}
+      {isMobile && (
+        <div className="hamburger" onClick={toggleSidebar}>
+          ☰
+        </div>
+      )}
 
-        <li
-          className={currentView === "stores" ? "active" : ""}
-          onClick={() => setView("stores")}
-        >
-          🏪 Danh sách cửa hàng
-        </li>
+      {/* Overlay mờ */}
+      {isMobile && (
+        <div
+          className={`sidebar-overlay ${isOpen ? "" : "hidden"}`}
+          onClick={closeSidebar}
+        ></div>
+      )}
 
-        {/* <li
-          className={currentView === "orders" ? "active" : ""}
-          onClick={() => setView("orders")}
-        >
-          📝 Quản lý đơn hàng
-        </li> */}
-
-        {/* Thêm quản lý người dùng */}
-        <li
-          className={currentView === "users" ? "active" : ""}
-          onClick={() => setView("users")}
-        >
-          👤 Quản lý người dùng
-        </li>
-
-        <li
-          className={currentView === "drones" ? "active" : ""}
-          onClick={() => setView("drones")}
-        >
-          🚁 Quản lý Drone
-        </li>
-
-        {/* Thêm quản lý doanh thu */}
-        <li
-          className={currentView === "revenues" ? "active" : ""}
-          onClick={() => setView("revenues")}
-        >
-          💰 Quản lý doanh thu
-        </li>
-      </ul>
-    </div>
+      {/* Sidebar */}
+      <div className={`sidebar-server ${isMobile && isOpen ? "open" : isMobile ? "closed" : ""}`}>
+        <h2>Server Panel</h2>
+        <ul>
+          <li
+            className={currentView === "dashboard" ? "active" : ""}
+            onClick={() => { setView("dashboard"); closeSidebar(); }}
+          >
+            📊 Dashboard
+          </li>
+          <li
+            className={currentView === "stores" ? "active" : ""}
+            onClick={() => { setView("stores"); closeSidebar(); }}
+          >
+            🏪 Danh sách cửa hàng
+          </li>
+          <li
+            className={currentView === "users" ? "active" : ""}
+            onClick={() => { setView("users"); closeSidebar(); }}
+          >
+            👤 Quản lý người dùng
+          </li>
+          <li
+            className={currentView === "drones" ? "active" : ""}
+            onClick={() => { setView("drones"); closeSidebar(); }}
+          >
+            🚁 Quản lý Drone
+          </li>
+          <li
+            className={currentView === "revenues" ? "active" : ""}
+            onClick={() => { setView("revenues"); closeSidebar(); }}
+          >
+            💰 Quản lý doanh thu
+          </li>
+        </ul>
+      </div>
+    </>
   );
 };
 

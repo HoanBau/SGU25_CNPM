@@ -5,6 +5,7 @@
   min-height: 100vh;
 }
 
+/* Header */
 .users-container h1 {
   margin-bottom: 20px;
   color: #222;
@@ -13,47 +14,12 @@
   text-align: center;
 }
 
-/* Stats summary */
-.stats-summary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 25px;
-}
-
-.stat-item {
-  background: #ffffff;
-  padding: 14px 18px;
-  border-radius: 12px;
-  text-align: center;
-  flex: 1;
-  min-width: 120px;
-  box-shadow: 0 2px 6px rgba(0,0,50,0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.stat-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,50,0.15);
-}
-
-.stat-item h3 {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 6px;
-}
-
-.stat-item p {
-  font-size: 18px;
-  font-weight: 600;
-  color: #007bff;
-}
-
 /* Form thêm user */
 .user-form {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
   background: #fff;
   padding: 15px;
   border-radius: 12px;
@@ -92,7 +58,7 @@
   transform: translateY(-1px);
 }
 
-/* Section khung */
+/* Section title */
 .section-title {
   font-size: 20px;
   font-weight: 600;
@@ -102,7 +68,7 @@
   padding-left: 10px;
 }
 
-/* Bảng user */
+/* Bảng user - desktop */
 .users-table {
   width: 100%;
   border-collapse: collapse;
@@ -138,7 +104,7 @@
   background-color: #ffe5e5 !important;
 }
 
-/* Button hành động */
+/* Buttons */
 .users-table td button {
   margin: 2px 3px;
   padding: 5px 10px;
@@ -148,68 +114,52 @@
   cursor: pointer;
   transition: all 0.2s;
 }
-
-/* Các loại button */
-.users-table td button:nth-child(1) { 
-  background: #2196f3; 
-  color: #fff; 
-}
-
-.users-table td button:nth-child(2) { 
-  background: #f44336; 
-  color: #fff; 
-}
-
 .users-table td button:hover { 
   opacity: 0.85; 
   transform: translateY(-1px); 
 }
 
-/* Status badge */
-.users-table td span.status {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 0.85em;
-}
-.users-table td span.status.active { 
-  background: #d4edda; 
-  color: #155724; 
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+
+/* Ẩn card trên desktop */
+.mobile-view { display: none; }
+
+@media (max-width: 768px) {
+  /* Ẩn table trên mobile */
+  .users-table { display: none; }
+  .mobile-view { display: block; }
+  .user-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 15px;
+    padding: 12px;
+    font-size: 14px;
+  }
+  .user-card div { margin-bottom: 6px; }
+  .card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .card-actions button {
+    flex: 1 1 48%;
+    font-size: 13px;
+    padding: 6px;
+  }
 }
 
-.users-table td span.status.inactive { 
-  background: #fff3cd; 
-  color: #856404; 
+
+@media (max-width: 768px) {
+  /* Ẩn table và tiêu đề table */
+  .users-table, .users-table + .section-title { 
+    display: none; 
+  }
+
+  /* Hiện card mobile */
+  .mobile-view { display: block; }
 }
 
-.users-table td span.status.pending { 
-  background: #ffeeba; 
-  color: #856404; 
-}
-
-.users-table td span.status.rejected { 
-  background: #f8d7da; 
-  color: #721c24; 
-}
-
-.users-table td span.status.blocked { 
-  background: #f5c6cb; 
-  color: #721c24; 
-}
-
-/* Responsive */
-@media (max-width: 992px) {
-  .user-form input,
-  .user-form select,
-  .user-form button { font-size: 13px; padding: 8px 10px; }
-  .users-table th,
-  .users-table td { padding: 10px; font-size: 13px; }
-}
-
-@media (max-width: 600px) {
-  .user-form { flex-direction: column; }
-  .users-table { display: block; overflow-x: auto; white-space: nowrap; }
-  .users-table th,
-  .users-table td { padding: 8px; font-size: 12px; }
-  .users-table td button { padding: 4px 6px; font-size: 11px; }
-}

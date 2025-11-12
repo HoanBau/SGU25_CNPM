@@ -132,27 +132,28 @@ const RevenuesServer = () => {
               <th>Hành động</th>
             </tr>
           </thead>
-          <tbody>
-            {stores.length === 0 && (
-              <tr>
-                <td colSpan={4} style={{ textAlign: "center" }}>
-                  Chưa có cửa hàng nào
-                </td>
-              </tr>
-            )}
-            {stores.map((s) => (
-              <tr key={s.id}>
-                <td>{s.id}</td>
-                <td>{s.name}</td>
-                <td>{currency(s.revenue)}</td>
-                <td>
-                  <button onClick={() => requestWithdraw(s.id)}>
-                    📤 Yêu cầu rút tiền
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+         <tbody>
+  {stores.length === 0 && (
+    <tr>
+      <td colSpan={4} style={{ textAlign: "center" }}>
+        Chưa có cửa hàng nào
+      </td>
+    </tr>
+  )}
+  {stores.map((s) => (
+    <tr key={s.id}>
+      <td data-label="ID">{s.id}</td>
+      <td data-label="Tên">{s.name}</td>
+      <td data-label="Doanh thu hiện có">{currency(s.revenue)}</td>
+      <td data-label="Hành động">
+        <button onClick={() => requestWithdraw(s.id)}>
+          📤 Yêu cầu rút tiền
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
         </table>
       </section>
 
@@ -171,44 +172,41 @@ const RevenuesServer = () => {
               <th>Hành động</th>
             </tr>
           </thead>
-          <tbody>
-            {withdrawRequests.length === 0 && (
-              <tr>
-                <td colSpan={8} style={{ textAlign: "center" }}>
-                  Chưa có yêu cầu nào
-                </td>
-              </tr>
-            )}
-            {withdrawRequests.map((r) => (
-              <tr key={r.id}>
-                <td>{r.id}</td>
-                <td>{r.storeName}</td>
-                <td>{currency(r.grossAmount)}</td>
-                <td>{currency(r.commission)}</td>
-                <td>
-                  <strong style={{ color: "green" }}>
-                    {currency(r.netAmount)}
-                  </strong>
-                </td>
-                <td>{r.status}</td>
-                <td>{new Date(r.createdAt).toLocaleString()}</td>
-                <td>
-                  {r.status === "pending" && (
-                    <>
-                      <button onClick={() => approveWithdraw(r.id)}>
-                        ✅ Duyệt
-                      </button>
-                      <button onClick={() => rejectWithdraw(r.id)}>
-                        ❌ Từ chối
-                      </button>
-                    </>
-                  )}
-                  {r.status === "approved" && <span>💸 Đã chuyển</span>}
-                  {r.status === "rejected" && <span>❌ Bị từ chối</span>}
-                </td>
-              </tr>
-            ))}
-          </tbody>
+         <tbody>
+  {withdrawRequests.length === 0 && (
+    <tr>
+      <td colSpan={8} style={{ textAlign: "center" }}>
+        Chưa có yêu cầu nào
+      </td>
+    </tr>
+  )}
+  {withdrawRequests.map((r) => (
+    <tr key={r.id}>
+      <td data-label="Mã yêu cầu">{r.id}</td>
+      <td data-label="Cửa hàng">{r.storeName}</td>
+      <td data-label="Tổng doanh thu">{currency(r.grossAmount)}</td>
+      <td data-label="Chiết khấu">{currency(r.commission)}</td>
+      <td data-label="Nhận về">
+        <strong style={{ color: "green" }}>{currency(r.netAmount)}</strong>
+      </td>
+      <td data-label="Trạng thái">{r.status}</td>
+      <td data-label="Thời gian tạo">
+        {new Date(r.createdAt).toLocaleString()}
+      </td>
+      <td data-label="Hành động">
+        {r.status === "pending" && (
+          <>
+            <button onClick={() => approveWithdraw(r.id)}>✅ Duyệt</button>
+            <button onClick={() => rejectWithdraw(r.id)}>❌ Từ chối</button>
+          </>
+        )}
+        {r.status === "approved" && <span>💸 Đã chuyển</span>}
+        {r.status === "rejected" && <span>❌ Bị từ chối</span>}
+      </td>
+    </tr>
+  ))}
+</tbody>
+
         </table>
       </section>
     </div>

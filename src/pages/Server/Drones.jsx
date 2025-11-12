@@ -257,53 +257,54 @@ const restartOrders = () => {
         <thead>
           <tr><th>#</th><th>Tên Drone</th><th>Trạng thái</th><th>Pin</th><th>Lượt giao còn</th><th>ETA</th><th>Hành động</th></tr>
         </thead>
-        <tbody>
-          {drones.map((drone, index) => (
-            <tr key={drone.id}>
-              <td>{index + 1}</td>
-              <td>{drone.name}</td>
-              <td>{translateDroneStatus(drone.status)}</td>
-              <td>{(drone.battery ?? 0).toFixed(0)}%</td>
+       <tbody>
+  {drones.map((drone, index) => (
+    <tr key={drone.id}>
+      <td data-label="#"> {index + 1} </td>
+      <td data-label="Tên Drone"> {drone.name} </td>
+      <td data-label="Trạng thái"> {translateDroneStatus(drone.status)} </td>
+      <td data-label="Pin">{(drone.battery ?? 0).toFixed(0)}%</td>
+      <td data-label="Lượt giao còn">{drone.deliveriesLeft}</td>
+      <td data-label="ETA">{drone.eta ? `${drone.eta}s` : "-"}</td>
+      <td data-label="Hành động">
+        {orders.filter(o => o.status === "pending").length > 0 && (
+          <select onChange={e => startDelivery(index, Number(e.target.value))} defaultValue="" disabled={drone.status !== "ready"}>
+            <option value="">🚀 Giao đơn</option>
+            {orders.filter(o => o.status === "pending").map(o =>
+              <option key={o.id} value={o.id}>#{o.id} {o.user}</option>
+            )}
+          </select>
+        )}
+        <select value="" onChange={e => changeDroneStatus(index, e.target.value)}>
+          <option value="">⚙️ Trạng thái</option>
+          <option value="ready">Sẵn sàng</option>
+          <option value="maintenance">Bảo trì</option>
+          <option value="low_battery">Pin yếu</option>
+        </select>
+        <button onClick={() => deleteDrone(index)}>❌</button>
+      </td>
+    </tr>
+  ))}
+</tbody>
 
-              <td>{drone.deliveriesLeft}</td>
-              <td>{drone.eta ? `${drone.eta}s` : "-"}</td>
-              <td>
-                {orders.filter(o => o.status === "pending").length > 0 && (
-                  <select onChange={e => startDelivery(index, Number(e.target.value))} defaultValue="" disabled={drone.status !== "ready"}>
-                    <option value="">🚀 Giao đơn</option>
-                    {orders.filter(o => o.status === "pending").map(o =>
-                      <option key={o.id} value={o.id}>#{o.id} {o.user}</option>
-                    )}
-                  </select>
-                )}
-                <select value="" onChange={e => changeDroneStatus(index, e.target.value)}>
-                  <option value="">⚙️ Trạng thái</option>
-                  <option value="ready">Sẵn sàng</option>
-                  <option value="maintenance">Bảo trì</option>
-                  <option value="low_battery">Pin yếu</option>
-                </select>
-                <button onClick={() => deleteDrone(index)}>❌</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
       </table>
 
       <h2>📦 Đơn hàng</h2>
       <table className="drones-table">
         <thead><tr><th>ID</th><th>Cửa hàng</th><th>Khách hàng</th><th>Trạng thái</th><th>Drone</th><th>Khoảng cách (km)</th></tr></thead>
         <tbody>
-          {orders.map(order => (
-            <tr key={order.id}>
-              <td>{order.id}</td>
-              <td>{order.store}</td>
-              <td>{order.user}</td>
-              <td>{translateOrderStatus(order.status)}</td>
-              <td>{order.drone || "-"}</td>
-              <td>{order.distance || "-"}</td>
-            </tr>
-          ))}
-        </tbody>
+  {orders.map(order => (
+    <tr key={order.id}>
+      <td data-label="ID">{order.id}</td>
+      <td data-label="Cửa hàng">{order.store}</td>
+      <td data-label="Khách hàng">{order.user}</td>
+      <td data-label="Trạng thái">{translateOrderStatus(order.status)}</td>
+      <td data-label="Drone">{order.drone || "-"}</td>
+      <td data-label="Khoảng cách (km)">{order.distance || "-"}</td>
+    </tr>
+  ))}
+</tbody>
+
       </table>
 
       <div className="map-wrapper" style={{ height: "400px", marginTop: "20px" }}>

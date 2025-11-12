@@ -315,20 +315,17 @@ const Stores = () => {
                     <div style={{ fontSize: 12, color: "#666" }}>Grab: {currency(grabShare)}</div>
                   </td>
                   <td>
-                    {s.status === "pending" && <button onClick={() => startReview(s.id)}>👀 Kiểm duyệt</button>}
-                    {s.status === "verifying" && (
-                      <>
-                        <button onClick={() => acceptStore(s.id)}>✅ Chấp nhận</button>
-                        <button onClick={() => rejectStore(s.id)}>❌ Từ chối</button>
-                        <button onClick={() => requestMoreDocs(s.id)}>📎 Bổ sung giấy tờ</button>
-                      </>
-                    )}
-                    {s.status === "approved" && (
-                      <button onClick={() => activateStore(s.id)}>🚀 Kích hoạt</button>
-                    )}
-                    {s.status === "active" && (
-                      <button onClick={() => generateOrder(s.id)}>➕ Sinh đơn</button>
-                    )}
+                   { s.status === "pending" && <button onClick={() => startReview(s.id)} className="accept">👀 Kiểm duyệt</button> }
+{ s.status === "verifying" && (
+  <>
+    <button onClick={() => acceptStore(s.id)} className="accept">✅ Chấp nhận</button>
+    <button onClick={() => rejectStore(s.id)} className="reject">❌ Từ chối</button>
+    <button onClick={() => requestMoreDocs(s.id)} className="add-order">📎 Bổ sung giấy tờ</button>
+  </>
+) }
+{ s.status === "approved" && <button onClick={() => activateStore(s.id)} className="activate">🚀 Kích hoạt</button> }
+{ s.status === "active" && <button onClick={() => generateOrder(s.id)} className="add-order">➕ Sinh đơn</button> }
+
                     <button onClick={() => deleteStore(s.id)} style={{ background: "#ff6b6b", color: "#fff", marginLeft: 6 }}>🗑️</button>
                   </td>
                 </tr>

@@ -1,22 +1,24 @@
-/* SidebarServer.css - phiên bản hiện đại & đồng bộ tông xanh Grab Server */
+/* ================= Sidebar mặc định ================= */
 .sidebar-server {
   width: 240px;
-  background: #f8fafc; /* nền sáng nhẹ */
+  background: #f8fafc;
   border-right: 1px solid #e2e8f0;
   padding: 20px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  transition: all 0.3s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 1000;
 }
 
 .sidebar-server h2 {
   font-size: 20px;
   margin-bottom: 30px;
   font-weight: 700;
-  color: #38bdf8; /* xanh dương nhạt */
+  color: #38bdf8;
   text-align: center;
   letter-spacing: 1px;
 }
@@ -31,30 +33,31 @@
 .sidebar-server ul li {
   margin: 10px 0;
   padding: 12px 15px;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 500;
   color: #334155;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   transition: all 0.3s ease;
 }
 
 .sidebar-server ul li:hover {
-  background-color: rgba(56, 189, 248, 0.15); /* xanh hover nhẹ */
+  background-color: rgba(56, 189, 248, 0.15);
   color: #0284c7;
   transform: translateX(5px);
 }
 
 .sidebar-server ul li.active {
-  background-color: #38bdf8; /* xanh dương chính */
+  background-color: #38bdf8;
   color: #ffffff;
   font-weight: 600;
-  box-shadow: 0 2px 6px rgba(56, 189, 248, 0.4);
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.4);
 }
 
+/* Footer nhỏ gọn */
 .sidebar-server-footer {
   margin-top: auto;
   padding-top: 20px;
@@ -64,35 +67,78 @@
   color: #64748b;
 }
 
-/* Icon & Text */
-.sidebar-server ul li span {
-  transition: opacity 0.3s;
+/* ================= Hamburger menu ================= */
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 1100;
+  color: #38bdf8;
+  transition: transform 0.2s ease;
 }
 
-/* Responsive: thu gọn sidebar trên mobile */
+.hamburger:hover {
+  transform: scale(1.1);
+}
+
+/* ================= Mobile: Sidebar slide + overlay ================= */
 @media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
   .sidebar-server {
-    width: 60px;
-    min-width: 60px;
-    padding: 10px;
+    width: 220px;
+    padding: 25px 15px;
+    height: 100vh;
+    background: #f8fafc;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1050;
+    border-right: 1px solid #e2e8f0;
+    border-radius: 0 12px 12px 0;
   }
 
-  .sidebar-server h2 {
-    display: none;
+  .sidebar-server.open {
+    transform: translateX(0);
   }
 
+  /* Overlay mờ */
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    z-index: 1040;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .sidebar-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Mục menu nhỏ gọn hơn */
   .sidebar-server ul li {
-    justify-content: center;
-    padding: 10px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-size: 15px;
+    gap: 10px;
   }
 
-  .sidebar-server ul li span {
-    display: none; /* chỉ còn icon */
-  }
-
-  .sidebar-server ul li.active {
-    border-radius: 50%;
-    padding: 12px;
-    background-color: #0284c7; /* màu active trên mobile */
+  .sidebar-server ul li:hover {
+    transform: translateX(0);
+    background-color: rgba(56, 189, 248, 0.1);
   }
 }

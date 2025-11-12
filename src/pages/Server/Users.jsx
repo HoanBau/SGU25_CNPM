@@ -267,6 +267,67 @@ const Users = () => {
           ))}
         </tbody>
       </table>
+
+      {/* Card view Admin (mobile) */}
+<div className="mobile-view">
+  <div className="section-title">🏢 Nhà hàng</div>
+  {adminUsers.map((user) => (
+    <div key={user.id} className={`user-card ${user.status === "blocked" ? "blocked-row" : ""}`}>
+      <div><strong>ID:</strong> {user.id}</div>
+      <div><strong>Tên:</strong> {editingId===user.id ? <input value={editingUser.name} onChange={e=>setEditingUser({...editingUser,name:e.target.value})}/> : user.name}</div>
+      <div><strong>Email:</strong> {editingId===user.id ? <input value={editingUser.email} onChange={e=>setEditingUser({...editingUser,email:e.target.value})}/> : user.email}</div>
+      <div><strong>Trạng thái:</strong> {user.status==="pending" ? "⏳ Chờ duyệt" : user.status==="rejected" ? "❌ Từ chối" : user.status==="blocked" ? "🔒 Bị khóa" : "✅ Đã duyệt"}</div>
+      <div><strong>Cửa hàng:</strong> {stores.find(s=>s.id===user.storeId)?.name || "-"}</div>
+      <div><strong>Tỷ lệ:</strong> {user.successRate}%</div>
+      <div><strong>Báo cáo:</strong> {user.reports}</div>
+      <div className="card-actions">
+        {editingId===user.id 
+          ? <button onClick={()=>saveEdit(user.id)}>Lưu</button>
+          : <>
+              <button onClick={()=>startEdit(user)}>✏️ Sửa</button>
+              <button onClick={()=>deleteUser(user.id)}>🗑 Xóa</button>
+              {user.status==="pending" && <>
+                <button onClick={()=>approveUser(user.id)}>✅ Duyệt</button>
+                <button onClick={()=>rejectUser(user.id)}>❌ Từ chối</button>
+              </>}
+              <button onClick={()=>updateStats(user.id,+10,0)}>+ Thành công</button>
+              <button onClick={()=>updateStats(user.id,-10,+1)}>+ Báo cáo</button>
+            </>
+        }
+      </div>
+    </div>
+  ))}
+</div>
+
+{/* Card view Customer (mobile) */}
+<div className="mobile-view">
+  <div className="section-title">🛒 Khách hàng</div>
+  {customerUsers.map((user) => (
+    <div key={user.id} className={`user-card ${user.status === "blocked" ? "blocked-row" : ""}`}>
+      <div><strong>ID:</strong> {user.id}</div>
+      <div><strong>Tên:</strong> {editingId===user.id ? <input value={editingUser.name} onChange={e=>setEditingUser({...editingUser,name:e.target.value})}/> : user.name}</div>
+      <div><strong>Email:</strong> {editingId===user.id ? <input value={editingUser.email} onChange={e=>setEditingUser({...editingUser,email:e.target.value})}/> : user.email}</div>
+      <div><strong>Trạng thái:</strong> {user.status==="active" ? "✅ Đang hoạt động" : user.status==="inactive" ? "⚫ Ngừng hoạt động" : "🔒 Bị khóa"}</div>
+      <div><strong>Tỷ lệ:</strong> {user.successRate}%</div>
+      <div><strong>Báo cáo:</strong> {user.reports}</div>
+      <div className="card-actions">
+        {editingId===user.id 
+          ? <button onClick={()=>saveEdit(user.id)}>Lưu</button>
+          : <>
+              <button onClick={()=>startEdit(user)}>✏️ Sửa</button>
+              <button onClick={()=>deleteUser(user.id)}>🗑 Xóa</button>
+              <button onClick={()=>toggleCustomerStatus(user.id)}>
+                {user.status==="active" ? "🔒 Khóa" : "🔓 Mở"}
+              </button>
+              <button onClick={()=>updateStats(user.id,+10,0)}>+ Thành công</button>
+              <button onClick={()=>updateStats(user.id,-10,+1)}>+ Báo cáo</button>
+            </>
+        }
+      </div>
+    </div>
+  ))}
+</div>
+
     </div>
   );
 };
