@@ -178,11 +178,13 @@
   display: flex;
   gap: 10px;
   margin-top: 8px;
+  flex-wrap: wrap;
 }
 
 .status-btn {
   flex: 1;
-  padding: 8px 12px;
+  min-width: 80px;
+  padding: 8px 10px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
@@ -232,13 +234,90 @@
 .status-btn.active:nth-child(2) { background-color: #f39c12; }
 .status-btn.active:nth-child(3) { background-color: #27ae60; }
 
-/* -------------------- Responsive -------------------- */
+/* -------------------- RESPONSIVE MOBILE -------------------- */
 @media (max-width: 600px) {
-  .orders-title { font-size: 22px; }
-  .summary-card { width: 100%; }
-  .order-card { padding: 15px; }
+  /* Container */
+  .orders-container {
+    padding: 12px;
+  }
+
+  /* Tiêu đề & thời gian */
+  .orders-title { 
+    font-size: 22px;       /* to hơn xíu */
+    text-align: left;
+    margin-top: 1px;
+  }
+  .live-time {
+    font-size: 16px;       /* to hơn xíu */
+    margin-bottom: 15px;
+    text-align: left;
+  }
+
+  /* Tổng quan hôm nay */
+  .today-summary {
+    gap: 12px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  .summary-card { 
+    width: 100%; 
+    padding: 14px 18px;     /* gọn hơn */
+  }
+  .summary-card h3 { font-size: 18px; }  /* to hơn xíu */
+  .summary-card p { font-size: 14px; }
+
+  /* Bộ lọc trạng thái */
+  .filter-buttons {
+    gap: 6px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
   .filter-buttons button {
-    padding: 8px 14px;
-    font-size: 14px;
+    padding: 6px 10px;
+    font-size: 13px;
+    flex: 1;
+  }
+
+  /* Danh sách đơn hàng */
+  .order-list {
+    grid-template-columns: 1fr; /* full width */
+    gap: 10px;
+  }
+
+  /* Card đơn hàng */
+  .order-card { 
+    padding: 12px 14px; 
+    border-left: 3px solid #e53935;
+    border-radius: 10px;
+  }
+
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .status-badge {
+    font-size: 10px;
+    padding: 4px 6px;
+  }
+
+  /* Danh sách món */
+  .order-items ul {
+    padding-left: 1px;
+  }
+
+  /* Status buttons */
+  .status-buttons {
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+  }
+
+  .status-btn {
+    width: 100%;
+    padding: 8px 0;
+    font-size: 13px;
   }
 }
+

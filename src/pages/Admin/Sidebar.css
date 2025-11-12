@@ -11,6 +11,7 @@
   box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
   font-family: "Inter", "Segoe UI", Tahoma, sans-serif;
   transition: all 0.3s ease;
+  z-index: 1000;
 }
 
 /* ================== HEADER ================== */
@@ -99,38 +100,72 @@
   padding-top: 20px;
   border-top: 1px solid #eee;
   font-size: 14px;
-  text-align: center;
+  text-align: right;   /* căn về bên phải */
   color: #999;
+  display: flex;
+  justify-content: flex-end; /* chắc chắn xích sang phải */
+  gap: 5px; /* nếu có icon + tên */
+}
+
+
+/* ================== HAMBURGER ICON ================== */
+.hamburger {
+  display: none; /* chỉ hiện trên mobile */
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  width: 28px;
+  height: 20px;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.hamburger .bar {
+  height: 3px;
+  width: 100%;
+  background-color: #ff4d4f;
+  border-radius: 2px;
 }
 
 /* ================== RESPONSIVE ================== */
 @media (max-width: 768px) {
+  /* Ẩn sidebar desktop, dùng hamburger */
+  .hamburger {
+    display: flex;
+  }
+
   .sidebar {
-    width: 70px;
-    min-width: 70px;
-    padding: 10px;
-    align-items: center;
+    position: fixed;
+    top: 0;
+    left: -240px;      /* ẩn ban đầu */
+    width: 240px;
+    height: 100vh;
+    padding: 20px;
+    background: linear-gradient(180deg, #ffffff 0%, #fff5f5 100%);
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease;
   }
 
-  .sidebar h2 {
-    display: none;
+  .sidebar.open {
+    left: 0;           /* hiện khi nhấn hamburger */
   }
 
-  .sidebar ul li {
-    justify-content: center;
-    padding: 10px;
-  }
-
-  .sidebar ul li span {
-    display: none;
-  }
-
+  /* Logo thu nhỏ trên mobile */
   .sidebar-logo {
     width: 50px;
     height: 50px;
+    margin-bottom: 10px;
   }
 
-  .sidebar-footer {
-    font-size: 12px;
+  .sidebar h2 {
+    font-size: 16px;
+  }
+
+  /* Menu item mobile */
+  .sidebar ul li {
+    padding: 10px 14px;
+    font-size: 14px;
   }
 }

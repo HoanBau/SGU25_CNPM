@@ -122,9 +122,9 @@ h1 {
 }
 
 .delete-btn {
-  height: 36px;                /* bằng với nút Hết hàng */
-  min-width: 90px;             /* đảm bảo đủ rộng cho chữ Xóa */
-  padding: 0 14px;             /* padding ngang, padding dọc = 0 để height chuẩn */
+  height: 36px;
+  min-width: 90px;
+  padding: 0 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -133,11 +133,9 @@ h1 {
   background-color: #ff4d4d;
   color: #fff;
   cursor: pointer;
-  white-space: nowrap;         /* tránh chữ xuống dòng */
+  white-space: nowrap;
   text-align: center;
 }
-
-
 
 .toggle-btn {
   background-color: #27ae60;
@@ -146,11 +144,6 @@ h1 {
 
 .toggle-btn.soldout {
   background-color: #e74c3c;
-}
-
-.delete-btn {
-  background-color: #ff4d4d;
-  color: #fff;
 }
 
 .toggle-btn:hover,
@@ -181,12 +174,69 @@ h1 {
   to { opacity: 0; transform: translateX(100px); }
 }
 
+/* ================== MOBILE ================== */
 @media (max-width: 768px) {
-  .add-food-form form {
-    flex-direction: column;
+  .manage-food-container {
+    padding: 15px 10px; /* giảm padding để vừa màn hình nhỏ */
+    border-radius: 0;
+    margin: 0; /* sát lề */
   }
 
-  .food-table th, .food-table td {
-    padding: 10px 8px;
+  h1 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+  }
+
+  .add-food-form {
+    padding: 10px 10px;
+    border-radius: 6px;
+  }
+
+  .add-food-form h2 {
+    font-size: 1.2rem;
+  }
+
+  .add-food-form form {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .add-food-form input,
+  .add-food-form select,
+  .add-food-form button {
+    flex: 1 1 100%;
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  .reset-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .food-table th,
+  .food-table td {
+    padding: 6px 4px;
+    font-size: 12px;
+  }
+
+  .food-thumb {
+    width: 40px;
+    height: 40px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .delete-btn,
+  .toggle-btn {
+    width: 100%;
+    font-size: 12px;
+    height: 30px;
+    min-width: auto;
+    padding: 6px 0;
   }
 }
